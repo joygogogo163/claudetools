@@ -1,4 +1,4 @@
-# VibeSlash 指令助手
+# VibeSlash 指令助手~ Claude Code、Codex指令助手：不用背命令，按一下就出来
 
 **简体中文** · [English](README.en.md) · [日本語](README.ja.md) · [한국어](README.ko.md)
 
