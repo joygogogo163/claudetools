@@ -1,5 +1,13 @@
 /* 弹出窗口的宽度由内容决定：不能用 vw / 百分比限制宽度，否则首次布局时窗口还很窄，会被压成一条 */
 body { width: 400px; }
+/* 浏览器弹出窗口最高 600px：固定总高度，只让中间的列表滚动，顶部和底部按钮始终完整显示 */
+body {
+  display: flex;
+  flex-direction: column;
+  height: 560px;
+  overflow: hidden;
+}
+header, .status, footer { flex: none; }
 
 header { padding: 12px 12px 8px; }
 .tabs {
@@ -45,10 +53,11 @@ header { padding: 12px 12px 8px; }
 }
 
 .list {
+  flex: 1;
+  min-height: 0;
   list-style: none;
   margin: 0;
   padding: 0 6px 6px;
-  max-height: 420px;
   overflow-x: hidden;
   overflow-y: auto;
 }

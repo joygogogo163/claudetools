@@ -355,6 +355,13 @@ test('弹出页：Tab 切换到 Codex，按 Codex 的指令搜索并复制', asy
   await page.waitForSelector('#list .item');
   await page.keyboard.press('Tab');
   assert.equal(await page.getAttribute('[data-client="codex"]', 'aria-pressed'), 'true');
+  // 列表满的时候多了两行提示，也不能超出弹出窗口的高度上限（600px），底部按钮要完整可见
+  const layout = await page.evaluate(() => ({
+    height: document.body.scrollHeight,
+    footerBottom: document.querySelector('footer').getBoundingClientRect().bottom,
+  }));
+  assert.ok(layout.height <= 600, `弹出页高 ${layout.height}px，超过 600px`);
+  assert.ok(layout.footerBottom <= layout.height, '底部按钮被裁掉');
   await page.fill('#query', 'btw');
   assert.equal(await page.locator('#list .item .name').first().textContent(), '/side');
   assert.match(await page.textContent('#list .item.active .where'), /桌面版 · 终端 · IDE/);
