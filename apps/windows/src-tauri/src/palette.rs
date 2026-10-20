@@ -1,4 +1,5 @@
-//! 指令面板：按快捷键时记下前台窗口、识别客户端，把面板放到输入框旁边；选中指令后把焦点还回去再插入。
+//! 指令面板：按快捷键、在输入框里输入 / 或点悬浮按钮时记下目标窗口、识别客户端，把面板放到输入框旁边；
+//! 选中指令后把焦点还回去再插入。
 
 use serde::Serialize;
 use std::sync::Mutex;
@@ -6,6 +7,7 @@ use std::sync::mpsc;
 use std::time::Duration;
 use tauri::{AppHandle, Emitter, Manager, PhysicalPosition, Runtime, WebviewWindow};
 use vibeslash_detect::{AppKind, Match, Platform, Snapshot, app_kind, detect, rules};
+use vibeslash_platform::trigger::{slash_decision, slash_prefix};
 use vibeslash_platform::{Foreground, Rect};
 
 pub const LABEL: &str = "palette";
@@ -22,17 +24,39 @@ pub struct Context {
     pub can_insert: bool,
     /// 还在查终端的子进程，稍后会再发一次
     pub pending: bool,
+    /// 打开时的搜索词：输入 / 弹出时，是斜杠后面已经打出的字
+    pub query: String,
+}
+
+/// 面板是怎么打开的
+pub enum Origin {
+    Shortcut,
+    /// 在输入框里输入了斜杠；delete 是插入前要删掉的字符数（斜杠和后面已经打出的字）
+    Slash {
+        query: String,
+        delete: usize,
+    },
+    /// 点了悬浮按钮，目标是之前在前台的窗口
+    Launcher,
 }
 
 #[derive(Default)]
 pub struct PaletteState {
     target: Mutex<Option<Foreground>>,
     context: Mutex<Context>,
+    /// 插入前要删掉的字符数
+    delete: Mutex<usize>,
+    /// 最近一个在前台的、不属于本程序的窗口
+    last_external: Mutex<Option<isize>>,
 }
 
 impl PaletteState {
     pub fn context(&self) -> Context {
         self.context.lock().unwrap().clone()
+    }
+
+    pub fn set_last_external(&self, window: isize) {
+        *self.last_external.lock().unwrap() = Some(window);
     }
 }
 
@@ -61,18 +85,39 @@ fn snapshot(fg: &Foreground, processes: Vec<vibeslash_detect::Process>) -> Snaps
     }
 }
 
-/// 按快捷键：面板开着就关掉，否则识别前台客户端后打开
-pub fn toggle<R: Runtime>(app: &AppHandle<R>) {
-    let Some(window) = palette(app) else { return };
-    if window.is_visible().unwrap_or(false) {
-        hide(app, true);
-        return;
-    }
+pub fn is_open<R: Runtime>(app: &AppHandle<R>) -> bool {
+    palette(app).is_some_and(|w| w.is_visible().unwrap_or(false))
+}
 
+/// 按快捷键或点悬浮按钮：面板开着就关掉，否则打开
+pub fn toggle<R: Runtime>(app: &AppHandle<R>, origin: Origin) {
+    if is_open(app) {
+        hide(app, true);
+    } else {
+        open(app, origin);
+    }
+}
+
+/// 识别目标窗口里的客户端，打开面板
+pub fn open<R: Runtime>(app: &AppHandle<R>, origin: Origin) {
+    let Some(window) = palette(app) else { return };
     let own_pid = std::process::id();
-    let captured = capture().filter(|(fg, _)| fg.pid != own_pid);
     let state = app.state::<PaletteState>();
+    let captured = match origin {
+        // 点悬浮按钮时前台可能已经是按钮自己，用之前记下的窗口；面板放在按钮旁边
+        Origin::Launcher => {
+            let last = *state.last_external.lock().unwrap();
+            last.and_then(vibeslash_platform::capture_window).map(|fg| (fg, crate::launcher::rect(app)))
+        }
+        _ => capture(),
+    }
+    .filter(|(fg, _)| fg.pid != own_pid);
     let mut context = Context::default();
+    let mut delete = 0;
+    if let Origin::Slash { query, delete: count } = origin {
+        context.query = query;
+        delete = count;
+    }
 
     if let Some((fg, focus)) = &captured {
         let kind = app_kind(Platform::Windows, &fg.app, fg.package.as_deref(), rules());
@@ -102,6 +147,7 @@ pub fn toggle<R: Runtime>(app: &AppHandle<R>) {
 
     *state.target.lock().unwrap() = captured.map(|(fg, _)| fg);
     *state.context.lock().unwrap() = context.clone();
+    *state.delete.lock().unwrap() = delete;
     let _ = app.emit_to(LABEL, "palette:open", context);
     let _ = window.show();
     let _ = window.set_focus();
@@ -132,7 +178,9 @@ pub fn hide<R: Runtime>(app: &AppHandle<R>, restore: bool) {
 
 /// 关掉面板，把焦点还给原来的窗口，再插入指令
 pub fn insert<R: Runtime>(app: &AppHandle<R>, text: String, send: bool) -> Result<(), String> {
-    let target = app.state::<PaletteState>().target.lock().unwrap().clone();
+    let state = app.state::<PaletteState>();
+    let target = state.target.lock().unwrap().clone();
+    let delete = std::mem::take(&mut *state.delete.lock().unwrap());
     let Some(target) = target else {
         vibeslash_platform::copy_text(&text)?;
         return Err("没有可以插入的窗口，已复制到剪贴板".into());
@@ -148,9 +196,35 @@ pub fn insert<R: Runtime>(app: &AppHandle<R>, text: String, send: bool) -> Resul
         }
         // 等目标窗口真正拿到焦点
         std::thread::sleep(Duration::from_millis(80));
+        if delete > 0 {
+            // 弹出面板后用户可能又多打了几个字，以输入框里实际的内容为准
+            let count = vibeslash_platform::focused_text()
+                .and_then(|text| slash_prefix(&text))
+                .map_or(delete, |(_, count)| count);
+            let _ = vibeslash_platform::delete_chars(count);
+        }
         if vibeslash_platform::insert_text(&text, mode, send).is_err() {
             let _ = vibeslash_platform::copy_text(&text);
         }
     });
     Ok(())
+}
+
+/// 按下斜杠键后（在监听线程里调用）：前台是 Claude、ChatGPT 桌面 App，且斜杠在输入框开头时弹出面板
+pub fn on_slash<R: Runtime>(app: &AppHandle<R>, at_line_start: bool) {
+    if !crate::settings::load(app).slash_trigger || is_open(app) {
+        return;
+    }
+    let Some(fg) = vibeslash_platform::capture_foreground() else { return };
+    if fg.pid == std::process::id()
+        || app_kind(Platform::Windows, &fg.app, fg.package.as_deref(), rules()) != AppKind::Client
+    {
+        return;
+    }
+    // 钩子收到按键时斜杠还没进输入框，稍等再读
+    std::thread::sleep(Duration::from_millis(60));
+    let text = vibeslash_platform::focused_text();
+    if let Some((query, delete)) = slash_decision(text.as_deref(), at_line_start) {
+        open(app, Origin::Slash { query, delete });
+    }
 }

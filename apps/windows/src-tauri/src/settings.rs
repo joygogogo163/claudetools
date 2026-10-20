@@ -5,6 +5,7 @@ use serde_json::{Map, Value, json};
 use tauri::{AppHandle, Runtime};
 use tauri_plugin_store::StoreExt;
 use vibeslash_platform::InsertMode;
+use vibeslash_platform::trigger::LauncherMode;
 
 const FILE: &str = "settings.json";
 pub const DEFAULT_SHORTCUT: &str = "Alt+Slash";
@@ -22,6 +23,12 @@ pub struct Settings {
     pub last_client: String,
     /// 不想看到的内置指令，写法见 @vibeslash/core 的 hiddenKey
     pub hidden_commands: Vec<String>,
+    /// 在 Claude、ChatGPT 桌面 App 的空输入框里输入 / 时自动弹出面板
+    pub slash_trigger: bool,
+    /// 悬浮按钮：auto（只在 Claude、ChatGPT 桌面 App 前台时显示）、always、off
+    pub launcher: String,
+    /// 悬浮按钮的位置（屏幕物理像素）；为空时放在主屏右下角
+    pub launcher_position: Option<[i32; 2]>,
     /// 是否已经显示过欢迎页
     pub welcomed: bool,
 }
@@ -34,6 +41,9 @@ impl Default for Settings {
             append_space: true,
             last_client: "claude-code".into(),
             hidden_commands: Vec::new(),
+            slash_trigger: true,
+            launcher: "auto".into(),
+            launcher_position: None,
             welcomed: false,
         }
     }
@@ -42,6 +52,10 @@ impl Default for Settings {
 impl Settings {
     pub fn insert_mode(&self) -> InsertMode {
         if self.insert_mode == "type" { InsertMode::Type } else { InsertMode::Paste }
+    }
+
+    pub fn launcher_mode(&self) -> LauncherMode {
+        LauncherMode::parse(&self.launcher)
     }
 }
 

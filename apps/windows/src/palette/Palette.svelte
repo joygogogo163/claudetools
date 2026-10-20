@@ -8,7 +8,7 @@
 
   let settings = $state<Settings | null>(null);
   let usage = $state<UsageMap>({});
-  let context = $state<Context>({ detected: null, app: '', canInsert: false, pending: false });
+  let context = $state<Context>({ detected: null, app: '', canInsert: false, pending: false, query: '' });
   let client = $state<ClientId>('claude-code');
   /** 打开后用户手动切换过工具，就不再跟着识别结果变 */
   let pinned = $state(false);
@@ -28,7 +28,7 @@
     context = next;
     pinned = false;
     client = next.detected?.client ?? settings?.lastClient ?? 'claude-code';
-    query = '';
+    query = next.query ?? '';
     index = 0;
     message = '';
     tick().then(() => input?.focus());

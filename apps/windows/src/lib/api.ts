@@ -9,6 +9,12 @@ export interface Settings {
   appendSpace: boolean;
   lastClient: ClientId;
   hiddenCommands: string[];
+  /** 在桌面 App 的空输入框里输入 / 时自动弹出面板 */
+  slashTrigger: boolean;
+  /** 悬浮按钮：auto 只在 Claude、ChatGPT 桌面 App 前台时显示 */
+  launcher: 'auto' | 'always' | 'off';
+  /** 悬浮按钮位置（屏幕物理像素），null 表示默认位置 */
+  launcherPosition: [number, number] | null;
   welcomed: boolean;
 }
 
@@ -24,6 +30,8 @@ export interface Context {
   app: string;
   canInsert: boolean;
   pending: boolean;
+  /** 打开时的搜索词（输入 / 弹出时斜杠后面已经打出的字） */
+  query: string;
 }
 
 /** 工具 → 使用记录 */
@@ -45,6 +53,7 @@ export const api = {
   copy: (text: string) => invoke<void>('copy', { text }),
   hidePalette: (restore: boolean) => invoke<void>('hide_palette', { restore }),
   openSettings: () => invoke<void>('open_settings'),
+  launcherClick: () => invoke<void>('launcher_click'),
   getAutostart: () => invoke<boolean>('get_autostart'),
   setAutostart: (enabled: boolean) => invoke<void>('set_autostart', { enabled }),
 };
