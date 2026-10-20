@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>VibeSlash 指令助手</title>
+    <link rel="stylesheet" href="../shared/page.css" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <div class="tabs" role="group" aria-label="选择工具">
+        <button type="button" data-client="claude-code" aria-pressed="true">Claude Code</button>
+        <button type="button" data-client="codex" aria-pressed="false">Codex</button>
+      </div>
+      <label class="search">
+        <span class="slash mono" aria-hidden="true">/</span>
+        <input id="query" type="text" placeholder="搜索指令或用途，如「压缩」「审查」" aria-label="搜索指令" autocomplete="off" spellcheck="false" />
+      </label>
+    </header>
+    <p id="status" class="status" hidden></p>
+    <ul id="list" class="list" role="listbox" aria-label="指令"></ul>
+    <footer>
+      <span class="hint"><kbd>↑↓</kbd> 选择 <kbd>Enter</kbd> <span id="enter-hint">插入</span> <kbd>Tab</kbd> 切换</span>
+      <span class="actions">
+        <button id="settings" class="btn" type="button">设置</button>
+        <button id="open" class="btn primary" type="button">打开面板<kbd id="shortcut"></kbd></button>
+      </span>
+    </footer>
+    <script src="../core.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

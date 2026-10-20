@@ -1,0 +1,22 @@
+{
+  "name": "@vibeslash/core",
+  "version": "1.1.0",
+  "private": true,
+  "description": "VibeSlash 的指令数据与搜索逻辑：Claude Code、Codex 斜杠指令的中文说明，供浏览器扩展和桌面端共用",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./catalog.json": "./generated/catalog.json"
+  },
+  "scripts": {
+    "generate": "node scripts/generate.ts",
+    "check": "node scripts/generate.ts --check",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "22.18.0",
+    "typescript": "5.9.3",
+    "vitest": "3.2.4"
+  }
+}

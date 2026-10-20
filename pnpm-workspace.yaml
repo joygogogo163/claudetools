@@ -1,0 +1,7 @@
+packages:
+  - packages/*
+  - apps/*
+
+# esbuild 的安装脚本只是校验平台二进制，允许运行
+onlyBuiltDependencies:
+  - esbuild
