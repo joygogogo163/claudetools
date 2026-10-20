@@ -37,7 +37,7 @@ private let codexWeb = DetectMatch(client: .codex, surface: .web, via: .title)
 
 @Test func badgesAndNotes() {
     let model = Catalog.shared.client(.claudeCode).commands.first { $0.name == "model" }!
-    #expect(badges(for: model, surface: .desktop).map(\.0) == ["需带参数"])
+    #expect(badges(for: model, surface: .desktop).map(\.text) == ["需带参数"])
     #expect(badges(for: model, surface: nil).isEmpty)
     let diff = Catalog.shared.client(.codex).commands.first { $0.name == "diff" }!
     #expect(detailNotes(for: diff, client: .codex, surface: nil) == ["可用于：终端"])

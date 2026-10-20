@@ -28,19 +28,24 @@ public func canInsert(detected: DetectMatch?, hasTarget: Bool) -> Bool {
     return !(detected?.client == .codex && detected?.surface == .web)
 }
 
-public enum Tone: Sendable {
+public enum Tone: Sendable, Hashable {
     case plain, accent, warn
 }
 
+public struct Badge: Sendable, Hashable {
+    public let text: String
+    public let tone: Tone
+}
+
 /// 列表里的标记；不限环境时不标某个环境的限制
-public func badges(for command: Command, surface: Surface?, catalog: Catalog = .shared) -> [(String, Tone)] {
-    var list: [(String, Tone)] = []
-    if command.kind == "skill" { list.append(("技能", .plain)) }
-    if command.kind == "workflow" { list.append(("工作流", .plain)) }
+public func badges(for command: Command, surface: Surface?, catalog: Catalog = .shared) -> [Badge] {
+    var list: [Badge] = []
+    if command.kind == "skill" { list.append(Badge(text: "技能", tone: .plain)) }
+    if command.kind == "workflow" { list.append(Badge(text: "工作流", tone: .plain)) }
     if let surface {
         switch command.limit(in: surface) {
-        case .arg: list.append(("需带参数", .accent))
-        case .no: list.append(("\(catalog.surfaceLabel(surface))不可用", .warn))
+        case .arg: list.append(Badge(text: "需带参数", tone: .accent))
+        case .no: list.append(Badge(text: "\(catalog.surfaceLabel(surface))不可用", tone: .warn))
         case nil: break
         }
     }
@@ -69,9 +74,16 @@ public func statusText(detected: DetectMatch?, app: String?, pending: Bool, hasT
     return "没有识别出 \(app ?? "当前窗口") 里的工具，显示 \(name) 的全部指令"
 }
 
-public enum Row: Hashable, Sendable {
+public enum Row: Hashable, Sendable, Identifiable {
     case group(String)
     case item(Command, index: Int)
+
+    public var id: String {
+        switch self {
+        case .group(let label): "group:\(label)"
+        case .item(let command, _): "item:\(command.name)"
+        }
+    }
 }
 
 /// 搜索结果；没有搜索词时按「最近使用」和分类加上分组标题
