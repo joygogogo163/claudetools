@@ -1,8 +1,8 @@
-# Claude Code 指令助手
+# VibeSlash 指令助手 · 浏览器扩展
 
-Chrome / Edge 扩展，在 [Claude Code 网页版](https://claude.ai/code)里快速输入 `/` 指令。每条指令都带中文说明、使用场景、示例和网页版的注意事项。
+适用于 [Claude Code 网页版](https://claude.ai/code)的 Chrome / Edge 扩展，快速输入 `/` 指令。每条指令都带中文说明、使用场景、示例和网页版的注意事项。产品介绍、截图和完整指令表见[项目首页](../README.md)。
 
-![输入 / 时的联想](docs/suggest.png)
+![在 Claude Code 网页版输入 /co 时弹出的中文指令联想](docs/suggest.png)
 
 ## 功能
 
@@ -16,7 +16,7 @@ Chrome / Edge 扩展，在 [Claude Code 网页版](https://claude.ai/code)里快
 - **自定义指令**：在设置页添加仓库里的技能（`.claude/skills`）、命令（`.claude/commands`）或团队约定的指令，可以导入、导出 JSON。与内置指令同名时，以你的说明为准。
 - **工具栏弹出页**：点击扩展图标可以速查全部指令；当前标签页是 Claude Code 时，点击指令会插入到输入框，否则复制到剪贴板。
 
-![指令面板](docs/palette.png)
+![VibeSlash 指令面板：中文搜索「审查」并查看用法和示例](docs/palette.png)
 
 ## 安装
 
@@ -117,6 +117,8 @@ npx playwright install chromium   # 首次运行需要下载浏览器
 npm test
 ```
 
+`npm run screenshots` 重新生成 `docs/` 下的截图；`npm run readme` 用 `extension/commands.js` 更新根目录 README 的指令表格（CI 会检查它是否最新）。
+
 测试分两部分：
 
 - `tests/core.test.mjs`：指令数据完整性、搜索排序、自定义指令的校验与合并。
@@ -129,3 +131,7 @@ npm test
 ## 浏览器支持
 
 Chrome、Edge 等 Chromium 内核浏览器（Manifest V3）。暂不支持 Firefox。
+
+## 商标声明
+
+Claude 和 Claude Code 是 Anthropic, PBC 的商标。VibeSlash 是独立的第三方开源项目，与 Anthropic 没有关联，也未获得其认可或赞助；提及相关名称仅用于说明兼容性。
