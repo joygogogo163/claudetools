@@ -83,7 +83,7 @@
 
 - **贴着输入框弹出**：读取输入框位置（Windows 用 UI Automation，macOS 用辅助功能 API），面板优先出现在输入框上方。
 - **选中即插入**：`Enter` 插入，`Ctrl+Enter`（macOS `⌘↩`）插入并发送，`Shift+Enter` 插入示例。默认借用剪贴板粘贴，完成后恢复原来的剪贴板内容；也可以改成逐字输入。
-- **轻巧**：安装包只有 1 MB 左右，常驻后台也不占地方。Windows 版用 Rust 编写，界面借用系统自带的 WebView2；macOS 版是原生 Swift 应用（AppKit + SwiftUI）。都不需要安装 .NET、Java、Node.js 之类的运行环境，也不像 Electron 应用那样自带一整个浏览器内核（这类应用的安装包常常有上百 MB）。
+- **轻巧**：安装包只有 1 MB 左右，几秒钟就能下载完。Windows 版用 Rust 编写，界面借用系统自带的 WebView2；macOS 版是原生 Swift 应用（AppKit + SwiftUI）。都不需要安装 .NET、Java、Node.js 之类的运行环境，也不像 Electron 应用那样自带一整个浏览器内核（这类应用的安装包常常有上百 MB）。
 
 | 下载 | 大小 |
 | :- | :-: |
