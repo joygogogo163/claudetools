@@ -13,6 +13,7 @@ const img = (shots: Shots, file: string, alt: string, eager = false) => {
 const FAQ_ZH: [string, string][] = [
   ['VibeSlash 是什么？', 'VibeSlash 指令助手是一个免费开源的 Claude Code、Codex 斜杠命令（/ 指令）中文速查与输入工具，有浏览器扩展和 Windows、macOS 桌面版。在输入框开头敲 / 就会弹出中文联想，或按快捷键打开完整的命令面板，每条命令都有中文说明、使用场景和示例。'],
   ['支持哪些客户端？', '浏览器扩展支持 Chrome、Edge 上的 Claude Code 网页版（claude.ai/code）。桌面版支持 Claude 桌面 App（Code 标签页）、ChatGPT 桌面 App 的 Codex 模式，以及终端和编辑器里运行的 Claude Code CLI、Codex CLI，会自动识别当前是哪个工具。'],
+  ['VibeSlash 有多大？', '很小：浏览器扩展 52 KB，Windows 安装包 1.3 MB，macOS 安装包 1 MB。桌面版不需要安装 .NET、Java 或 Node.js 等运行环境，Windows 版使用系统自带的 WebView2，macOS 版是原生应用。'],
   ['桌面版怎么用？', '安装后在托盘（Windows）或菜单栏（macOS）运行。在 Claude、ChatGPT 或终端里按 Alt + /（macOS 是 ⌥ /），命令面板会出现在输入框旁边，输入中文或英文搜索，回车就插入到输入框，Ctrl/⌘ + 回车插入并发送。'],
   ['Codex 的命令能在 ChatGPT 网页版里用吗？', '不能。按照 OpenAI 的文档，Codex 的斜杠命令只在 Codex CLI、IDE 扩展和 ChatGPT 桌面 App 的 Codex 模式里生效，ChatGPT 网页版有自己的指令菜单。所以在网页上 VibeSlash 只提供 Codex 命令的速查和复制。'],
   ['/compact 和 /clear 有什么区别？', '/compact 把之前的对话压缩成摘要，腾出上下文空间，会话继续；/clear 开始一段上下文为空的新对话。Claude Code 网页版不支持 /clear，可以在侧栏新建会话。'],
@@ -54,14 +55,14 @@ function downloads(lang: 'zh-CN' | 'en') {
   const zh = lang === 'zh-CN';
   const items = zh
     ? [
-        ['浏览器扩展', 'Chrome / Edge', 'Claude Code 网页版输入 / 即联想，Alt+K 打开命令面板；弹出页速查 Codex 命令。', `${RELEASES}?q=extension`],
-        ['Windows 版', 'Windows 10 / 11', '托盘常驻，Alt + / 呼出，支持 Claude、ChatGPT 桌面 App 和终端。', `${RELEASES}?q=desktop`],
-        ['macOS 版', 'macOS 14 及以上', '菜单栏常驻，⌥ / 呼出，Apple 芯片和 Intel 通用。', `${RELEASES}?q=desktop`],
+        ['浏览器扩展', 'Chrome / Edge · 52 KB', 'Claude Code 网页版输入 / 即联想，Alt+K 打开命令面板；弹出页速查 Codex 命令。', `${RELEASES}?q=extension`],
+        ['Windows 版', 'Windows 10 / 11 · 1.3 MB', '托盘常驻，Alt + / 呼出，支持 Claude、ChatGPT 桌面 App 和终端。', `${RELEASES}?q=desktop`],
+        ['macOS 版', 'macOS 14+ · 1 MB', '菜单栏常驻，⌥ / 呼出，Apple 芯片和 Intel 通用。', `${RELEASES}?q=desktop`],
       ]
     : [
-        ['Browser extension', 'Chrome / Edge', 'Slash-command autocomplete and an Alt+K palette on Claude Code for web; Codex quick reference in the popup.', `${RELEASES}?q=extension`],
-        ['Windows', 'Windows 10 / 11', 'Lives in the tray. Press Alt + / in Claude, ChatGPT or a terminal.', `${RELEASES}?q=desktop`],
-        ['macOS', 'macOS 14+', 'Lives in the menu bar. Press ⌥ /. Universal (Apple silicon and Intel).', `${RELEASES}?q=desktop`],
+        ['Browser extension', 'Chrome / Edge · 52 KB', 'Slash-command autocomplete and an Alt+K palette on Claude Code for web; Codex quick reference in the popup.', `${RELEASES}?q=extension`],
+        ['Windows', 'Windows 10 / 11 · 1.3 MB', 'Lives in the tray. Press Alt + / in Claude, ChatGPT or a terminal.', `${RELEASES}?q=desktop`],
+        ['macOS', 'macOS 14+ · 1 MB', 'Lives in the menu bar. Press ⌥ /. Universal (Apple silicon and Intel).', `${RELEASES}?q=desktop`],
       ];
   return `<section id="download" class="wrap section">
   <h2>${zh ? '免费下载' : 'Download for free'}</h2>
@@ -86,6 +87,7 @@ export function home(shots: Shots): string {
     ['自动识别客户端', '桌面版按前台窗口判断：Claude 桌面 App、ChatGPT 的 Codex 模式、终端里跑的 claude 还是 codex，只显示当前能用的命令。'],
     ['贴着输入框弹出', '面板出现在输入框旁边，选中后直接插入原来的输入框，Ctrl/⌘ + 回车插入并发送。'],
     ['标出各环境的差异', '网页版必须带参数的命令（如 /model）、只在终端或 IDE 可用的 Codex 命令，都有标记和说明。'],
+    ['小到可以忽略', '浏览器扩展 52 KB，Windows 安装包 1.3 MB，macOS 安装包 1 MB。不用装 .NET、Java、Node.js，下载几秒钟就能用。'],
     ['注重隐私', '不联网、不读对话记录，设置只保存在本机。完全免费，开源。'],
   ];
   const body = `<section class="hero">

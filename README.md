@@ -15,6 +15,8 @@
 
 **桌面版**（预览）常驻托盘或菜单栏：在 Claude 桌面 App、ChatGPT 桌面 App 的 Codex 模式，或终端里运行的 `claude` / `codex` 中按 `Alt + /`（macOS 是 `⌥ /`），命令面板会出现在输入框旁边，自动识别当前是哪个工具，选中即插入。
 
+> 🪶 **小到可以忽略**：浏览器扩展只有 **52 KB**，Windows 安装包 **1.3 MB**，macOS 安装包 **1 MB**。不用装 .NET、Java 或 Node.js，下载几秒钟，装上就能用。
+
 [**⬇ 下载**](https://github.com/joygogogo163/claudetools/releases) · [官网](https://joygogogo163.github.io/claudetools/) · [安装方法](#安装) · [桌面版](#桌面版windows--macos) · [命令大全](#命令大全) · [常见问题](#常见问题) · [English](#english)
 
 ![在 Claude Code 网页版输入 /co，弹出 /compact、/context、/code-review 等命令的中文联想](apps/extension/docs/suggest.png)
@@ -44,6 +46,7 @@
 - **自定义命令**：把仓库里的技能（`.claude/skills`）、命令（`.claude/commands`）或团队约定的指令加进来，支持 JSON 导入导出，随浏览器账号同步。
 - **深色模式**：跟随页面自动切换。
 - **Codex 命令速查**：工具栏弹出页可以在 Claude Code 和 Codex 之间切换（按 `Tab`），打开 Codex 相关页面时自动切到 Codex，标出每条命令适用的环境（终端、IDE、桌面版）。
+- **轻巧**：扩展 52 KB，桌面版安装包约 1 MB，不需要额外的运行环境。
 - **注重隐私**：不发起任何网络请求，不读取对话记录，只在本地运行。
 
 ## 截图
@@ -80,7 +83,16 @@
 
 - **贴着输入框弹出**：读取输入框位置（Windows 用 UI Automation，macOS 用辅助功能 API），面板优先出现在输入框上方。
 - **选中即插入**：`Enter` 插入，`Ctrl+Enter`（macOS `⌘↩`）插入并发送，`Shift+Enter` 插入示例。默认借用剪贴板粘贴，完成后恢复原来的剪贴板内容；也可以改成逐字输入。
-- **轻量**：Windows 版用 Rust + Tauri 2（系统自带的 WebView2），macOS 版是原生 Swift（AppKit + SwiftUI），都不需要额外运行时。
+- **轻巧**：安装包只有 1 MB 左右，常驻后台也不占地方。Windows 版用 Rust 编写，界面借用系统自带的 WebView2；macOS 版是原生 Swift 应用（AppKit + SwiftUI）。都不需要安装 .NET、Java、Node.js 之类的运行环境，也不像 Electron 应用那样自带一整个浏览器内核（这类应用的安装包常常有上百 MB）。
+
+| 下载 | 大小 |
+| :- | :-: |
+| 浏览器扩展（Chrome / Edge） | **52 KB** |
+| Windows 安装包（`setup.exe`） | **1.3 MB** |
+| Windows 便携版（`portable.zip`，解压即用） | **1.6 MB** |
+| macOS 安装包（`.dmg`，Apple 芯片和 Intel 通用） | **1.0 MB** |
+
+<sub>以 Releases 里扩展 v1.1.1、桌面版 v0.1.0 的文件大小为准。</sub>
 
 | Windows：识别到 Claude 桌面 App | Windows：识别到终端里的 Codex（深色） |
 | :-: | :-: |
@@ -353,7 +365,7 @@
 
 **VibeSlash** is a free, open-source Chrome / Edge extension that adds slash-command autocomplete and a searchable command palette to [Claude Code on the web](https://claude.ai/code). Type `/` at the start of the prompt to get suggestions, or press `Alt+K` to browse every Claude Code slash command with descriptions, usage notes, examples and web-specific caveats (descriptions are in Chinese). The toolbar popup also works as a quick reference for OpenAI Codex slash commands, showing which ones work in the Codex CLI, the IDE extension and the ChatGPT desktop app. You can add your own commands for either tool. It runs entirely locally: no network requests, no access to your conversations.
 
-The Windows and macOS apps (preview) live in the tray / menu bar. Press `Alt + /` (`⌥ /` on macOS) in the Claude desktop app, ChatGPT's Codex mode or a terminal running `claude` / `codex`: the palette opens next to the input box, detects which tool you are using, and inserts the command you pick.
+Tiny downloads: the extension is 52 KB, the Windows installer 1.3 MB and the macOS installer 1 MB, with no .NET, Java or Node.js runtime required. The Windows and macOS apps (preview) live in the tray / menu bar. Press `Alt + /` (`⌥ /` on macOS) in the Claude desktop app, ChatGPT's Codex mode or a terminal running `claude` / `codex`: the palette opens next to the input box, detects which tool you are using, and inserts the command you pick.
 
 Download from [Releases](https://github.com/joygogogo163/claudetools/releases). For the extension, unzip it, enable Developer mode at `chrome://extensions` and choose **Load unpacked**. Website: <https://joygogogo163.github.io/claudetools/>
 
