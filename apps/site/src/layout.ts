@@ -39,13 +39,16 @@ function header(s: Strings, key: PageKey | null): string {
   const languages = LOCALES.map((locale) => {
     const other = STRINGS[locale];
     const current = locale === s.locale ? ' aria-current="true"' : '';
-    return `<a href="${url(pathOf(locale, key ?? 'home'))}" hreflang="${other.htmlLang}" lang="${other.htmlLang}"${current}>${esc(other.langName)}</a>`;
+    return `<li><a href="${url(pathOf(locale, key ?? 'home'))}" hreflang="${other.htmlLang}" lang="${other.htmlLang}"${current}>${esc(other.langName)}</a></li>`;
   }).join('');
   return `<header class="site-header">
   <div class="wrap bar">
     <a class="brand" href="${url(pathOf(s.locale, 'home'))}"><img src="${url('favicon-32.png')}" width="24" height="24" alt="">VibeSlash</a>
     <nav class="main-nav" aria-label="${esc(s.siteName)}">${nav.map(([href, text]) => `<a href="${url(href)}">${esc(text)}</a>`).join('')}</nav>
-    <nav class="langs" aria-label="${esc(s.nav.language)}">${languages}</nav>
+    <details class="langs">
+      <summary aria-label="${esc(s.nav.language)}"><span class="globe" aria-hidden="true">🌐</span>${esc(s.langName)}<span class="caret" aria-hidden="true">▾</span></summary>
+      <ul>${languages}</ul>
+    </details>
   </div>
 </header>`;
 }

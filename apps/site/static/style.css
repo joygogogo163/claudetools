@@ -45,9 +45,40 @@ img { max-width: 100%; height: auto; display: block; }
 .site-header nav a { color: var(--muted); }
 .site-header nav a:hover { color: var(--fg); text-decoration: none; }
 .main-nav { margin-left: auto; }
-.langs { gap: 2px !important; padding: 2px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px !important; }
-.langs a { padding: 1px 7px; border-radius: 6px; }
-.langs a[aria-current] { background: var(--accent-soft); color: var(--accent) !important; font-weight: 600; }
+/* 语言切换：一个按钮，点开是下拉菜单 */
+.langs { position: relative; flex: none; }
+.langs summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card);
+  font-size: 14px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.langs summary::-webkit-details-marker { display: none; }
+.langs summary:hover, .langs[open] summary { border-color: var(--accent); }
+.langs .caret { font-size: 11px; color: var(--muted); }
+.langs ul {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  min-width: 140px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+.langs ul a { display: block; padding: 6px 12px; border-radius: 8px; color: var(--fg); font-size: 14px; }
+.langs ul a:hover { background: var(--bg-soft); text-decoration: none; }
+.langs ul a[aria-current] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
 
 .hero { padding: 64px 0 24px; text-align: center; }
 .eyebrow { margin: 0; color: var(--accent); font-weight: 600; font-size: 14px; letter-spacing: 0.04em; }
