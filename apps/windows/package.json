@@ -1,6 +1,6 @@
 {
   "name": "@vibeslash/windows",
-  "version": "0.1.0",
+  "version": "1.2.0",
   "private": true,
   "description": "VibeSlash 指令助手 Windows 版：Rust + Tauri 2，界面用 Svelte 5",
   "type": "module",

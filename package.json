@@ -1,6 +1,7 @@
 {
   "name": "vibeslash",
   "private": true,
+  "version": "1.2.0",
   "type": "module",
   "description": "VibeSlash 指令助手：Claude Code、Codex 命令速查表，不用背命令，按一下就出来（浏览器扩展、Windows 和 macOS 桌面版）",
   "packageManager": "pnpm@10.28.0",
@@ -10,7 +11,8 @@
   "scripts": {
     "generate": "pnpm --filter @vibeslash/core generate",
     "readme": "node scripts/readme.ts",
-    "check": "pnpm -r --if-present check && node scripts/readme.ts --check",
+    "check": "pnpm -r --if-present check && node scripts/readme.ts --check && node scripts/version.ts --check",
+    "version:set": "node scripts/version.ts",
     "typecheck": "pnpm -r --if-present typecheck && tsc --noEmit",
     "test": "pnpm -r --if-present test",
     "build": "pnpm -r --if-present build"

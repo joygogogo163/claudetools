@@ -1,19 +1,15 @@
 name: extension
 
+# 发布见 release.yml：它调用本工作流和 desktop.yml，把三个安装包放进同一个 Release
 on:
   push:
     branches: ['**']
-    tags: ['extension-v*']
   pull_request:
   workflow_dispatch:
-    inputs:
-      release:
-        description: 创建 Release（标签 extension-v<manifest 版本号>，指向本次运行的提交）
-        type: boolean
-        default: false
+  workflow_call:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
@@ -42,24 +38,3 @@ jobs:
         with:
           name: vibeslash-extension
           path: apps/extension/dist/*.zip
-
-      - name: 发布 Release
-        if: startsWith(github.ref, 'refs/tags/extension-v') || inputs.release
-        working-directory: apps/extension
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          version="$(node -p "require('./src/manifest.json').version")"
-          if [ "$GITHUB_REF_TYPE" = tag ]; then
-            tag="$GITHUB_REF_NAME"
-            if [ "$tag" != "extension-v$version" ]; then
-              echo "标签 $tag 与 manifest.json 的版本 $version 不一致" >&2
-              exit 1
-            fi
-          else
-            tag="extension-v$version"
-          fi
-          gh release create "$tag" dist/*.zip \
-            --target "$GITHUB_SHA" \
-            --title "VibeSlash 指令助手 浏览器扩展 v$version" \
-            --notes "下载 vibeslash-extension-v$version.zip，解压后在 chrome://extensions 开启开发者模式，点「加载已解压的扩展程序」选择解压出来的目录。"

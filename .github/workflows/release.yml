@@ -1,0 +1,56 @@
+name: release
+
+# 发布新版本：先用 node scripts/version.ts <版本号> 改好版本号并合并到默认分支，
+# 再在 Actions 里手动运行本工作流（或推送标签 v<版本号>）。
+# 浏览器扩展、Windows 版、macOS 版一起构建，放进同一个 Release。
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  extension:
+    uses: ./.github/workflows/extension.yml
+  desktop:
+    uses: ./.github/workflows/desktop.yml
+
+  release:
+    needs: [extension, desktop]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: 检查版本号
+        run: node scripts/version.ts --check
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+          merge-multiple: true
+      - name: 发布 Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          tag="v$version"
+          if [ "$GITHUB_REF_TYPE" = tag ] && [ "$GITHUB_REF_NAME" != "$tag" ]; then
+            echo "标签 $GITHUB_REF_NAME 与版本号 $version 不一致" >&2
+            exit 1
+          fi
+          ls -l out
+          gh release create "$tag" out/* \
+            --target "$GITHUB_SHA" \
+            --title "VibeSlash 指令助手 v$version" \
+            --notes "Claude Code、Codex 命令速查表：不用背命令，按一下就出来。浏览器扩展、Windows 版、macOS 版都在下面。
+
+          | 下载 | 说明 |
+          | :- | :- |
+          | \`vibeslash-extension-v$version.zip\` | Chrome / Edge 浏览器扩展：解压后在 chrome://extensions 开启开发者模式，点「加载已解压的扩展程序」选择解压出来的目录 |
+          | \`VibeSlash-$version-windows-x64-setup.exe\` | Windows 10 / 11 安装包；也可以下载 \`portable.zip\` 解压直接运行。启动后在托盘运行，默认快捷键 Alt + / |
+          | \`VibeSlash-$version-macos.dmg\` | macOS 14 及以上，Apple 芯片和 Intel 通用：把 VibeSlash 拖进「应用程序」，首次使用按提示授权「辅助功能」，默认快捷键 ⌥ / |
+
+          桌面版还是预览版，安装包暂未签名：Windows 可能提示「未知发布者」，点「更多信息」→「仍要运行」；macOS 第一次打开请在「应用程序」里右键 VibeSlash →「打开」。"
