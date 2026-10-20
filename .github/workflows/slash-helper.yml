@@ -9,6 +9,11 @@ on:
       - 'claude-code-slash-helper/**'
       - '.github/workflows/slash-helper.yml'
   workflow_dispatch:
+    inputs:
+      release:
+        description: 创建 Release（标签 slash-helper-v<manifest 版本号>，指向本次运行的提交）
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -40,16 +45,21 @@ jobs:
           path: claude-code-slash-helper/dist/*.zip
 
       - name: 发布 Release
-        if: startsWith(github.ref, 'refs/tags/slash-helper-v')
+        if: startsWith(github.ref, 'refs/tags/slash-helper-v') || inputs.release
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.ref_name }}
         run: |
           version="$(node -p "require('./extension/manifest.json').version")"
-          if [ "$TAG" != "slash-helper-v$version" ]; then
-            echo "标签 $TAG 与 manifest.json 的版本 $version 不一致" >&2
-            exit 1
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            tag="$GITHUB_REF_NAME"
+            if [ "$tag" != "slash-helper-v$version" ]; then
+              echo "标签 $tag 与 manifest.json 的版本 $version 不一致" >&2
+              exit 1
+            fi
+          else
+            tag="slash-helper-v$version"
           fi
-          gh release create "$TAG" dist/*.zip \
+          gh release create "$tag" dist/*.zip \
+            --target "$GITHUB_SHA" \
             --title "Claude Code 指令助手 v$version" \
             --notes "下载 claude-code-slash-helper-v$version.zip，解压后在 chrome://extensions 开启开发者模式，点「加载已解压的扩展程序」选择解压出来的目录。"

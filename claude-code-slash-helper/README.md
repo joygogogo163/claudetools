@@ -44,6 +44,8 @@ GitHub Actions 每次推送都会跑测试并打包，zip 作为构建产物（A
 2. 推送标签 `slash-helper-v<版本号>`，例如 `git tag slash-helper-v1.0.1 && git push origin slash-helper-v1.0.1`。
 3. 工作流会校验标签与版本号一致，然后创建 Release 并附上 zip。
 
+不方便推送标签时，也可以在 Actions 页面手动运行 `claude-code-slash-helper` 工作流并勾选「创建 Release」，工作流会在所选分支的最新提交上创建标签 `slash-helper-v<版本号>` 和 Release。
+
 ## 收录的指令
 
 指令依据官方文档 [Commands](https://code.claude.com/docs/en/commands) 和 [Use Claude Code in the cloud](https://code.claude.com/docs/en/claude-code-on-the-web#manage-context) 整理，只收录在网页版有意义的指令。云端会话支持输出文字的内置指令；`/plugin`、`/resume`、`/theme` 这类只能在终端界面里运行的指令没有收录。
