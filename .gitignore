@@ -1,4 +1,10 @@
 node_modules/
 test-results/
+dist/
 *.zip
 .DS_Store
+target/
+apps/*/dist/
+apps/windows/src-tauri/gen/
+.build/
+*.xcodeproj/xcuserdata/

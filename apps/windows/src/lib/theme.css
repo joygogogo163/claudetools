@@ -1,0 +1,68 @@
+/* 与浏览器扩展一致的配色，跟随系统深浅色 */
+:root {
+  --bg: #ffffff;
+  --bg-soft: #f7f6f2;
+  --fg: #1f1e1c;
+  --muted: #6d6b65;
+  --border: #e3e0d8;
+  --accent: #c2603e;
+  --accent-soft: #f6e7df;
+  --active: #f1ede4;
+  --warn: #a33b2a;
+  --warn-soft: #f9e3df;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #2a2926;
+    --bg-soft: #33322e;
+    --fg: #f3f1ea;
+    --muted: #aaa69c;
+    --border: #45433e;
+    --accent: #e08a68;
+    --accent-soft: #4a3329;
+    --active: #3a3934;
+    --warn: #f0a596;
+    --warn-soft: #4b2b25;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font: 14px/1.5 "Segoe UI Variable Text", "Segoe UI", "Microsoft YaHei UI", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.mono, code, kbd { font-family: "Cascadia Mono", Consolas, ui-monospace, monospace; }
+button, input, select { font: inherit; color: inherit; }
+kbd {
+  font-size: 11px;
+  line-height: 16px;
+  padding: 0 5px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-soft);
+}
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  line-height: 16px;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: var(--bg-soft);
+  color: var(--muted);
+  white-space: nowrap;
+}
+.badge.accent { background: var(--accent-soft); color: var(--accent); }
+.badge.warn { background: var(--warn-soft); color: var(--warn); }
+.btn {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 5px 12px;
+  cursor: pointer;
+}
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }

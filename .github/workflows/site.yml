@@ -1,0 +1,53 @@
+name: site
+
+# 官网：每次推送都构建并检查（SEO 要素、站内链接），只有默认分支发布到 GitHub Pages。
+# 首次使用前要在仓库 Settings → Pages 里把 Source 设为「GitHub Actions」。
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'apps/site/**'
+      - 'packages/core/**'
+      - 'apps/extension/docs/**'
+      - 'apps/windows/docs/**'
+      - '.github/workflows/site.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+        working-directory: apps/site
+      - run: pnpm build
+        working-directory: apps/site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/site/dist
+
+  deploy:
+    needs: build
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

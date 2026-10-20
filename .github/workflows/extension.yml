@@ -1,0 +1,65 @@
+name: extension
+
+on:
+  push:
+    branches: ['**']
+    tags: ['extension-v*']
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 创建 Release（标签 extension-v<manifest 版本号>，指向本次运行的提交）
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+        working-directory: apps/extension
+      # 生成的数据和 README 表格必须是最新的
+      - run: pnpm check
+      - run: pnpm typecheck
+      - run: pnpm test
+      - name: Windows 版界面交互测试
+        run: pnpm --filter @vibeslash/windows test:ui
+      - run: pnpm zip
+        working-directory: apps/extension
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vibeslash-extension
+          path: apps/extension/dist/*.zip
+
+      - name: 发布 Release
+        if: startsWith(github.ref, 'refs/tags/extension-v') || inputs.release
+        working-directory: apps/extension
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="$(node -p "require('./src/manifest.json').version")"
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            tag="$GITHUB_REF_NAME"
+            if [ "$tag" != "extension-v$version" ]; then
+              echo "标签 $tag 与 manifest.json 的版本 $version 不一致" >&2
+              exit 1
+            fi
+          else
+            tag="extension-v$version"
+          fi
+          gh release create "$tag" dist/*.zip \
+            --target "$GITHUB_SHA" \
+            --title "VibeSlash 指令助手 浏览器扩展 v$version" \
+            --notes "下载 vibeslash-extension-v$version.zip，解压后在 chrome://extensions 开启开发者模式，点「加载已解压的扩展程序」选择解压出来的目录。"

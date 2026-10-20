@@ -1,0 +1,24 @@
+[package]
+name = "vibeslash-platform"
+description = "桌面版的系统调用：前台窗口、子进程、输入框位置、模拟按键和剪贴板（Windows 实现，其他平台为空实现）"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+vibeslash-detect.workspace = true
+sysinfo = { version = "0.39", default-features = false, features = ["system"] }
+
+[target.'cfg(windows)'.dependencies]
+arboard = { version = "3.7", default-features = false }
+windows = { version = "0.62", features = [
+  "Win32_Foundation",
+  "Win32_Graphics_Gdi",
+  "Win32_Storage_Packaging_Appx",
+  "Win32_System_Com",
+  "Win32_System_Threading",
+  "Win32_UI_Accessibility",
+  "Win32_UI_Input_KeyboardAndMouse",
+  "Win32_UI_WindowsAndMessaging",
+] }

@@ -1,0 +1,23 @@
+{"version": 1, "cases": [
+{"name":"macOS Claude 桌面 App","snapshot":{"platform":"mac","app":"com.anthropic.claudefordesktop","title":"Claude"},"expected":{"client":"claude-code","surface":"desktop","via":"app","appName":"Claude"}},
+{"name":"macOS ChatGPT 桌面 App","snapshot":{"platform":"mac","app":"com.openai.codex","title":"ChatGPT"},"expected":{"client":"codex","surface":"desktop","via":"app","appName":"ChatGPT"}},
+{"name":"macOS 旧版 ChatGPT（不含 Codex）","snapshot":{"platform":"mac","app":"com.openai.chat","title":"ChatGPT"},"expected":null},
+{"name":"iTerm2 里跑 claude","snapshot":{"platform":"mac","app":"com.googlecode.iterm2","title":"zsh","processes":[{"name":"zsh","args":"","started":1},{"name":"claude","args":"","started":2}]},"expected":{"client":"claude-code","surface":"cli","via":"process"}},
+{"name":"终端标题优先于子进程","snapshot":{"platform":"mac","app":"com.apple.Terminal","title":"✳ Claude Code","processes":[{"name":"codex","args":"","started":9}]},"expected":{"client":"claude-code","surface":"cli","via":"title"}},
+{"name":"两个工具都在跑，取最近启动的","snapshot":{"platform":"mac","app":"com.mitchellh.ghostty","title":"~/repo","processes":[{"name":"claude","args":"","started":5},{"name":"codex","args":"","started":7},{"name":"zsh","args":"","started":8}]},"expected":{"client":"codex","surface":"cli","via":"process"}},
+{"name":"Node 方式安装的 Codex","snapshot":{"platform":"mac","app":"net.kovidgoyal.kitty","processes":[{"name":"node","args":"/usr/local/lib/node_modules/@openai/codex/bin/codex.js","started":3}]},"expected":{"client":"codex","surface":"cli","via":"process"}},
+{"name":"终端里没有相关进程","snapshot":{"platform":"mac","app":"com.apple.Terminal","title":"bash","processes":[{"name":"vim","args":"","started":1}]},"expected":null},
+{"name":"VS Code 里的 Codex 扩展","snapshot":{"platform":"mac","app":"com.microsoft.VSCode","title":"app.ts — repo","processes":[{"name":"codex","args":"codex app-server","started":4}]},"expected":{"client":"codex","surface":"ide","via":"process"}},
+{"name":"JetBrains 里跑 claude","snapshot":{"platform":"mac","app":"com.jetbrains.intellij","processes":[{"name":"claude","args":"","started":2}]},"expected":{"client":"claude-code","surface":"cli","via":"process"}},
+{"name":"Chrome 里的 Claude Code","snapshot":{"platform":"mac","app":"com.google.Chrome","title":"Fix login bug - Claude Code"},"expected":{"client":"claude-code","surface":"web","via":"title"}},
+{"name":"Chrome 里的普通 Claude 对话","snapshot":{"platform":"mac","app":"com.google.Chrome","title":"Claude"},"expected":null},
+{"name":"Edge 里的 Codex","snapshot":{"platform":"windows","app":"msedge","title":"Codex - Microsoft Edge"},"expected":{"client":"codex","surface":"web","via":"title"}},
+{"name":"不认识的应用","snapshot":{"platform":"mac","app":"com.apple.finder","title":"Downloads"},"expected":null},
+{"name":"Windows Claude（应用包）","snapshot":{"platform":"windows","app":"claude","package":"Claude_pzs8sxrjxfjjc","title":"Claude"},"expected":{"client":"claude-code","surface":"desktop","via":"app","appName":"Claude"}},
+{"name":"Windows ChatGPT（应用包）","snapshot":{"platform":"windows","app":"chatgpt","package":"OpenAI.Codex_2p2nqsd0c76g0","title":"ChatGPT"},"expected":{"client":"codex","surface":"desktop","via":"app","appName":"ChatGPT"}},
+{"name":"Windows ChatGPT（没有应用包信息）","snapshot":{"platform":"windows","app":"ChatGPT.exe","title":"ChatGPT"},"expected":{"client":"codex","surface":"desktop","via":"app","appName":"ChatGPT"}},
+{"name":"Windows Terminal 里跑 codex","snapshot":{"platform":"windows","app":"windowsterminal","title":"PowerShell","processes":[{"name":"pwsh.exe","args":"","started":1},{"name":"codex.exe","args":"","started":3}]},"expected":{"client":"codex","surface":"cli","via":"process"}},
+{"name":"Windows 上 Node 方式安装的 claude","snapshot":{"platform":"windows","app":"WindowsTerminal.exe","processes":[{"name":"node.exe","args":"C:\\Users\\a\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\cli.js","started":2}]},"expected":{"client":"claude-code","surface":"cli","via":"process"}},
+{"name":"Windows Cursor 里跑 claude","snapshot":{"platform":"windows","app":"cursor","title":"main.rs - Cursor","processes":[{"name":"claude.exe","args":"","started":2}]},"expected":{"client":"claude-code","surface":"cli","via":"process"}},
+{"name":"Windows 资源管理器","snapshot":{"platform":"windows","app":"explorer","title":"下载"},"expected":null}
+]}
