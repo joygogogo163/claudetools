@@ -1,0 +1,84 @@
+/* 弹出页与设置页共用的配色和基础样式 */
+:root {
+  --bg: #ffffff;
+  --bg-soft: #f7f6f2;
+  --fg: #1f1e1c;
+  --muted: #6d6b65;
+  --border: #e3e0d8;
+  --accent: #c2603e;
+  --accent-soft: #f6e7df;
+  --active: #f1ede4;
+  --warn: #a33b2a;
+  --warn-soft: #f9e3df;
+  --ok: #2f7a4b;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #2a2926;
+    --bg-soft: #33322e;
+    --fg: #f3f1ea;
+    --muted: #aaa69c;
+    --border: #45433e;
+    --accent: #e08a68;
+    --accent-soft: #4a3329;
+    --active: #3a3934;
+    --warn: #f0a596;
+    --warn-soft: #4b2b25;
+    --ok: #7fcf9b;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #2a2926;
+  --bg-soft: #33322e;
+  --fg: #f3f1ea;
+  --muted: #aaa69c;
+  --border: #45433e;
+  --accent: #e08a68;
+  --accent-soft: #4a3329;
+  --active: #3a3934;
+  --warn: #f0a596;
+  --warn-soft: #4b2b25;
+  --ok: #7fcf9b;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 14px/1.5 system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+code, .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+button, input, textarea { font: inherit; color: inherit; }
+.btn {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 5px 12px;
+  cursor: pointer;
+}
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn:disabled { opacity: 0.5; cursor: default; }
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  line-height: 16px;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: var(--bg-soft);
+  color: var(--muted);
+  white-space: nowrap;
+}
+.badge.warn { background: var(--warn-soft); color: var(--warn); }
+.badge.accent { background: var(--accent-soft); color: var(--accent); }
+kbd {
+  font-family: inherit;
+  font-size: 12px;
+  padding: 0 5px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-soft);
+}

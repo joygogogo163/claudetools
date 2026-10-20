@@ -1,0 +1,19 @@
+{
+  "name": "claude-code-slash-helper",
+  "version": "1.0.0",
+  "private": true,
+  "description": "浏览器扩展：在 Claude Code 网页版快速输入 / 指令，并显示提示与用途",
+  "scripts": {
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.56.1",
+    "prosemirror-keymap": "1.2.3",
+    "prosemirror-model": "1.25.12",
+    "prosemirror-schema-basic": "1.2.5",
+    "prosemirror-state": "1.4.4",
+    "prosemirror-view": "1.42.6",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  }
+}

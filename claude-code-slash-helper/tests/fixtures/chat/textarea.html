@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>React textarea fixture</title>
+    <style>
+      body { margin: 0; height: 100vh; font-family: sans-serif; }
+      .composer { position: fixed; left: 40px; right: 40px; bottom: 24px; }
+      textarea { width: 100%; font-size: 15px; }
+    </style>
+  </head>
+  <body>
+    <div role="dialog" aria-label="环境设置"><textarea id="dialogInput" rows="2" style="width: 400px"></textarea></div>
+    <div id="app"></div>
+    <script src="/node_modules/react/umd/react.development.js"></script>
+    <script src="/node_modules/react-dom/umd/react-dom.development.js"></script>
+    <script>
+      // 模拟受控 textarea：直接改 value 而不触发 React 的 onChange 时，状态不会更新
+      const h = React.createElement;
+      window.pageKeys = [];
+      window.escapes = 0;
+      document.addEventListener('keydown', (e) => {
+        window.pageKeys.push(e.key);
+        if (e.key === 'Escape') window.escapes++;
+      });
+      function App() {
+        const [value, setValue] = React.useState('');
+        const [sent, setSent] = React.useState([]);
+        const send = () => {
+          if (!value.trim()) return;
+          setSent((list) => [...list, value]);
+          setValue('');
+        };
+        return h(
+          'div',
+          { className: 'composer' },
+          h('pre', { id: 'state' }, value),
+          h('pre', { id: 'sent' }, JSON.stringify(sent)),
+          h(
+            'form',
+            { onSubmit: (e) => { e.preventDefault(); send(); } },
+            h('textarea', {
+              id: 'prompt',
+              rows: 3,
+              value,
+              onChange: (e) => setValue(e.target.value),
+              onKeyDown: (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  send();
+                }
+              },
+            }),
+            h('button', { type: 'submit', 'aria-label': 'Send message', disabled: !value.trim() }, '↑'),
+          ),
+        );
+      }
+      ReactDOM.createRoot(document.getElementById('app')).render(h(App));
+    </script>
+  </body>
+</html>

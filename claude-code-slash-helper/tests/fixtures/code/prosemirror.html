@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>ProseMirror fixture</title>
+    <style>
+      body { margin: 0; height: 100vh; font-family: sans-serif; }
+      #editor { position: fixed; left: 40px; right: 40px; bottom: 24px; border: 1px solid #999; min-height: 60px; }
+      .ProseMirror { outline: none; padding: 8px; white-space: pre-wrap; }
+      .ProseMirror p { margin: 0; }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "prosemirror-state": "/node_modules/prosemirror-state/dist/index.js",
+          "prosemirror-view": "/node_modules/prosemirror-view/dist/index.js",
+          "prosemirror-model": "/node_modules/prosemirror-model/dist/index.js",
+          "prosemirror-transform": "/node_modules/prosemirror-transform/dist/index.js",
+          "prosemirror-schema-basic": "/node_modules/prosemirror-schema-basic/dist/index.js",
+          "prosemirror-keymap": "/node_modules/prosemirror-keymap/dist/index.js",
+          "orderedmap": "/node_modules/orderedmap/dist/index.js",
+          "w3c-keyname": "/node_modules/w3c-keyname/index.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="editor"></div>
+    <script type="module">
+      import { EditorState, TextSelection } from 'prosemirror-state';
+      import { EditorView } from 'prosemirror-view';
+      import { schema } from 'prosemirror-schema-basic';
+      import { keymap } from 'prosemirror-keymap';
+
+      window.sent = [];
+      const submit = (state, dispatch) => {
+        window.sent.push(state.doc.textContent);
+        dispatch(state.tr.delete(0, state.doc.content.size));
+        return true;
+      };
+      const view = new EditorView(document.getElementById('editor'), {
+        state: EditorState.create({ schema, plugins: [keymap({ Enter: submit })] }),
+      });
+      window.view = view;
+      window.docText = () => view.state.doc.textBetween(0, view.state.doc.content.size, '\n');
+      // 用多段落内容替换文档，光标放到末尾
+      window.setParagraphs = (texts) => {
+        const doc = schema.node('doc', null, texts.map((t) => schema.node('paragraph', null, t ? [schema.text(t)] : [])));
+        let state = EditorState.create({ schema, doc, plugins: view.state.plugins });
+        state = state.apply(state.tr.setSelection(TextSelection.atEnd(state.doc)));
+        view.updateState(state);
+        view.focus();
+      };
+      window.pmReady = true;
+    </script>
+  </body>
+</html>
