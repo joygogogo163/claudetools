@@ -17,7 +17,9 @@
 
 > 🪶 **小到可以忽略**：浏览器扩展只有 **52 KB**，Windows 安装包 **1.3 MB**，macOS 安装包 **1 MB**。不用装 .NET、Java 或 Node.js，下载几秒钟，装上就能用。
 
-[**⬇ 下载**](https://github.com/joygogogo163/claudetools/releases) · [官网](https://joygogogo163.github.io/claudetools/) · [安装方法](#安装) · [桌面版](#桌面版windows--macos) · [命令大全](#命令大全) · [常见问题](#常见问题) · [English](#english)
+官网：[中文](https://joygogogo163.github.io/claudetools/) · [English](https://joygogogo163.github.io/claudetools/en/) · [日本語](https://joygogogo163.github.io/claudetools/ja/) · [한국어](https://joygogogo163.github.io/claudetools/ko/)
+
+[**⬇ 下载**](https://github.com/joygogogo163/claudetools/releases) · [安装方法](#安装) · [桌面版](#桌面版windows--macos) · [命令大全](#命令大全) · [常见问题](#常见问题) · [English](#english)
 
 ![在 Claude Code 网页版输入 /co，弹出 /compact、/context、/code-review 等命令的中文联想](apps/extension/docs/suggest.png)
 

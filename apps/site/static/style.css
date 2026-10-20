@@ -44,6 +44,10 @@ img { max-width: 100%; height: auto; display: block; }
 .site-header nav { display: flex; min-width: 0; gap: 18px; font-size: 14.5px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
 .site-header nav a { color: var(--muted); }
 .site-header nav a:hover { color: var(--fg); text-decoration: none; }
+.main-nav { margin-left: auto; }
+.langs { gap: 2px !important; padding: 2px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px !important; }
+.langs a { padding: 1px 7px; border-radius: 6px; }
+.langs a[aria-current] { background: var(--accent-soft); color: var(--accent) !important; font-weight: 600; }
 
 .hero { padding: 64px 0 24px; text-align: center; }
 .eyebrow { margin: 0; color: var(--accent); font-weight: 600; font-size: 14px; letter-spacing: 0.04em; }
@@ -109,4 +113,6 @@ a.card:hover { border-color: var(--accent); text-decoration: none; }
   .gallery.two { grid-template-columns: 1fr; }
   .hero { padding-top: 40px; }
   .site-header nav { gap: 12px; font-size: 13.5px; }
+  .main-nav { display: none !important; }
+  .langs { margin-left: auto; }
 }

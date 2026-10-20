@@ -1,8 +1,8 @@
-// 页面骨架：SEO 相关的 head（标题、描述、canonical、hreflang、Open Graph、结构化数据）和公共的页头页脚。
+// 页面骨架：SEO 相关的 head（标题、描述、canonical、四种语言的 hreflang、Open Graph、结构化数据），
+// 以及公共的页头（导航、语言切换）和页脚。
+import { LOCALES, type Locale } from '@vibeslash/core';
+import { STRINGS, type Strings } from './strings.ts';
 
-export const SITE_NAME = 'VibeSlash 指令助手';
-export const TAGLINE = 'Claude Code、Codex 命令速查表：不用背命令，按一下就出来。';
-export const TAGLINE_EN = 'Every Claude Code & Codex slash command, one keystroke away — no memorizing.';
 export const REPO = 'https://github.com/joygogogo163/claudetools';
 export const RELEASES = `${REPO}/releases`;
 
@@ -12,77 +12,71 @@ export const BASE = (process.env.SITE_URL ?? 'https://joygogogo163.github.io/cla
 const ESCAPES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 export const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ESCAPES[c]);
 
-/** 站内链接：path 相对站点根，例如 'claude-code/' */
+/** 站内链接：path 相对站点根 */
 export const url = (path = '') => BASE + path;
 
+export type PageKey = 'home' | 'claude-code' | 'codex';
+
+/** 某种语言某个页面的路径，例如 ja + codex → ja/codex/ */
+export const pathOf = (locale: Locale, key: PageKey) => STRINGS[locale].prefix + (key === 'home' ? '' : `${key}/`);
+
 export interface PageMeta {
-  /** 相对站点根的路径，以 / 结尾或为空（首页） */
-  path: string;
-  lang: 'zh-CN' | 'en';
+  s: Strings;
+  /** 404 页没有对应的 key */
+  key: PageKey | null;
   title: string;
   description: string;
-  /** 另一种语言版本的路径 */
-  alternate?: { lang: 'zh-CN' | 'en'; path: string };
-  /** JSON-LD 结构化数据 */
   jsonLd?: object[];
-  /** 不让搜索引擎收录（404 页） */
   noindex?: boolean;
 }
 
-export const DISCLAIMER_ZH =
-  'Claude 和 Claude Code 是 Anthropic, PBC 的商标；Codex 和 ChatGPT 是 OpenAI 的商标。VibeSlash 是独立的第三方开源项目，与 Anthropic、OpenAI 没有任何关联，也未获得其认可、赞助或授权。本站提及这些名称仅用于说明兼容性，相关商标归各自所有者所有。';
-export const DISCLAIMER_EN =
-  'Claude and Claude Code are trademarks of Anthropic, PBC. Codex and ChatGPT are trademarks of OpenAI. VibeSlash is an independent, unofficial open-source project and is not affiliated with, endorsed by, or sponsored by Anthropic or OpenAI.';
-
-function header(lang: 'zh-CN' | 'en'): string {
-  const zh = lang === 'zh-CN';
-  const nav = zh
-    ? [
-        ['claude-code/', 'Claude Code 命令'],
-        ['codex/', 'Codex 命令'],
-        ['#download', '下载'],
-        ['en/', 'English'],
-      ]
-    : [
-        ['en/#download', 'Download'],
-        ['claude-code/', 'Claude Code commands (中文)'],
-        ['', '中文'],
-      ];
+function header(s: Strings, key: PageKey | null): string {
+  const nav: [string, string][] = [
+    [pathOf(s.locale, 'claude-code'), s.nav.claude],
+    [pathOf(s.locale, 'codex'), s.nav.codex],
+    [`${pathOf(s.locale, 'home')}#download`, s.nav.download],
+  ];
+  const languages = LOCALES.map((locale) => {
+    const other = STRINGS[locale];
+    const current = locale === s.locale ? ' aria-current="true"' : '';
+    return `<a href="${url(pathOf(locale, key ?? 'home'))}" hreflang="${other.htmlLang}" lang="${other.htmlLang}"${current}>${esc(other.langName)}</a>`;
+  }).join('');
   return `<header class="site-header">
   <div class="wrap bar">
-    <a class="brand" href="${url(zh ? '' : 'en/')}"><img src="${url('favicon-32.png')}" width="24" height="24" alt="">VibeSlash</a>
-    <nav aria-label="${zh ? '主导航' : 'Main'}">${nav
-      .map(([href, text]) => `<a href="${url(href)}">${esc(text)}</a>`)
-      .join('')}</nav>
+    <a class="brand" href="${url(pathOf(s.locale, 'home'))}"><img src="${url('favicon-32.png')}" width="24" height="24" alt="">VibeSlash</a>
+    <nav class="main-nav" aria-label="${esc(s.siteName)}">${nav.map(([href, text]) => `<a href="${url(href)}">${esc(text)}</a>`).join('')}</nav>
+    <nav class="langs" aria-label="${esc(s.nav.language)}">${languages}</nav>
   </div>
 </header>`;
 }
 
-function footer(lang: 'zh-CN' | 'en'): string {
-  const zh = lang === 'zh-CN';
+function footer(s: Strings): string {
   return `<footer class="site-footer">
   <div class="wrap">
-    <p><a href="${REPO}">GitHub</a> · <a href="${RELEASES}">${zh ? '下载' : 'Releases'}</a> · <a href="${url('claude-code/')}">Claude Code ${zh ? '命令大全' : 'commands'}</a> · <a href="${url('codex/')}">Codex ${zh ? '命令大全' : 'commands'}</a></p>
-    <p class="legal">${esc(zh ? DISCLAIMER_ZH : DISCLAIMER_EN)}</p>
+    <p><a href="${REPO}">GitHub</a> · <a href="${RELEASES}">${esc(s.footer.releases)}</a> · <a href="${url(pathOf(s.locale, 'claude-code'))}">${esc(s.footer.claudeAll)}</a> · <a href="${url(pathOf(s.locale, 'codex'))}">${esc(s.footer.codexAll)}</a></p>
+    <p class="legal">${esc(s.disclaimer)}</p>
   </div>
 </footer>`;
 }
 
 export function page(meta: PageMeta, body: string): string {
-  const canonical = url(meta.path);
-  const ogLocale = meta.lang === 'zh-CN' ? 'zh_CN' : 'en_US';
-  const alternates = meta.alternate
-    ? [
-        `<link rel="alternate" hreflang="${meta.lang}" href="${canonical}">`,
-        `<link rel="alternate" hreflang="${meta.alternate.lang}" href="${url(meta.alternate.path)}">`,
-        `<link rel="alternate" hreflang="x-default" href="${url(meta.lang === 'zh-CN' ? meta.path : meta.alternate.path)}">`,
-      ].join('\n  ')
-    : '';
+  const { s, key } = meta;
+  const canonical = key ? url(pathOf(s.locale, key)) : '';
+  const alternates =
+    key && !meta.noindex
+      ? [
+          ...LOCALES.map((l) => `<link rel="alternate" hreflang="${STRINGS[l].htmlLang}" href="${url(pathOf(l, key))}">`),
+          `<link rel="alternate" hreflang="x-default" href="${url(pathOf('zh-CN', key))}">`,
+        ].join('\n  ')
+      : '';
   const ld = (meta.jsonLd ?? [])
     .map((data) => `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`)
     .join('\n  ');
+  const ogLocales = LOCALES.filter((l) => l !== s.locale)
+    .map((l) => `<meta property="og:locale:alternate" content="${STRINGS[l].ogLocale}">`)
+    .join('\n  ');
   return `<!doctype html>
-<html lang="${meta.lang}">
+<html lang="${s.htmlLang}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -94,11 +88,12 @@ export function page(meta: PageMeta, body: string): string {
   <link rel="icon" type="image/png" sizes="32x32" href="${url('favicon-32.png')}">
   <link rel="apple-touch-icon" href="${url('apple-touch-icon.png')}">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="${esc(SITE_NAME)}">
-  <meta property="og:locale" content="${ogLocale}">
+  <meta property="og:site_name" content="${esc(s.siteName)}">
+  <meta property="og:locale" content="${s.ogLocale}">
+  ${ogLocales}
   <meta property="og:title" content="${esc(meta.title)}">
   <meta property="og:description" content="${esc(meta.description)}">
-  <meta property="og:url" content="${canonical}">
+  ${canonical ? `<meta property="og:url" content="${canonical}">` : ''}
   <meta property="og:image" content="${url('og-image.png')}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -110,11 +105,11 @@ export function page(meta: PageMeta, body: string): string {
   ${ld}
 </head>
 <body>
-${header(meta.lang)}
+${header(s, key)}
 <main>
 ${body}
 </main>
-${footer(meta.lang)}
+${footer(s)}
 </body>
 </html>
 `;
