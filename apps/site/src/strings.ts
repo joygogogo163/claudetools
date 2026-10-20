@@ -197,7 +197,7 @@ const en: Strings = {
     whyTitle: 'Why VibeSlash',
     features: [
       ['Type / and get suggestions', 'Type / at the start of the prompt on Claude Code for the web and matching commands appear above it. Press Enter to insert.'],
-      ['Fuzzy search', 'Type a few letters — “sr” finds /security-review, “comp” finds /compact. Recently used commands come first.'],
+      ['Fuzzy search', 'Type a few letters — “secrev” finds /security-review, “comp” finds /compact. Recently used commands come first.'],
       ['Detects your tool', 'The desktop app looks at the active window — the Claude desktop app, ChatGPT’s Codex mode, or claude / codex running in a terminal — and shows only the commands that work there.'],
       ['Opens next to the input box', 'The palette appears right by the input box and inserts the command into it. Ctrl/⌘ + Enter inserts and sends.'],
       ['Knows where each command works', 'Commands that need an argument on the web (such as /model) and Codex commands that only work in the terminal or IDE are labeled and explained.'],
@@ -297,7 +297,7 @@ const ja: Strings = {
     whyTitle: 'VibeSlash の特長',
     features: [
       ['/ を打つだけで候補を表示', 'Claude Code の Web 版で入力欄の先頭に / を打つと、一致するコマンドが上に並び、Enter で入力できます。'],
-      ['あいまい検索', '数文字打つだけ。「sr」で /security-review、「comp」で /compact が見つかります。最近使ったコマンドが先頭に並びます。'],
+      ['あいまい検索', '数文字打つだけ。「secrev」で /security-review、「comp」で /compact が見つかります。最近使ったコマンドが先頭に並びます。'],
       ['使っているツールを自動判別', 'デスクトップ版は前面のウィンドウを見て、Claude デスクトップアプリ、ChatGPT の Codex モード、ターミナルで動いている claude / codex を判別し、そこで使えるコマンドだけを表示します。'],
       ['入力欄のすぐ横に表示', 'パレットは入力欄の横に開き、選んだコマンドを元の入力欄に入力します。Ctrl/⌘ + Enter で入力して送信。'],
       ['環境ごとの違いも一目で', 'Web 版では引数が必要なコマンド（/model など）や、ターミナルや IDE でしか使えない Codex コマンドにはラベルと説明を付けています。'],
@@ -397,7 +397,7 @@ const ko: Strings = {
     whyTitle: 'VibeSlash를 쓰는 이유',
     features: [
       ['/ 만 입력하면 추천', 'Claude Code 웹 버전의 입력창 맨 앞에 / 를 입력하면 일치하는 명령어가 위에 나타나고, Enter로 입력합니다.'],
-      ['퍼지 검색', '몇 글자만 입력하세요. “sr”로 /security-review, “comp”로 /compact를 찾습니다. 최근에 쓴 명령어가 맨 위에 옵니다.'],
+      ['퍼지 검색', '몇 글자만 입력하세요. “secrev”로 /security-review, “comp”로 /compact를 찾습니다. 최근에 쓴 명령어가 맨 위에 옵니다.'],
       ['사용 중인 도구 자동 인식', '데스크톱 앱은 앞에 있는 창을 보고 Claude 데스크톱 앱, ChatGPT의 Codex 모드, 터미널에서 실행 중인 claude / codex 를 구분해 그곳에서 쓸 수 있는 명령어만 보여 줍니다.'],
       ['입력창 바로 옆에 표시', '팔레트가 입력창 옆에 열리고, 고른 명령어를 원래 입력창에 입력합니다. Ctrl/⌘ + Enter를 누르면 입력하고 바로 전송합니다.'],
       ['환경별 차이를 한눈에', '웹 버전에서 인수가 필요한 명령어(/model 등)와 터미널이나 IDE에서만 되는 Codex 명령어에는 표시와 설명이 붙어 있습니다.'],
