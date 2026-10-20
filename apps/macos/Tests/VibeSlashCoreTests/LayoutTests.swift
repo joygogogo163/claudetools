@@ -1,5 +1,9 @@
 // 与 Windows 版 layout.rs 的测试一一对应
 import Foundation
+#if canImport(CoreGraphics)
+// macOS 上 CGRect 的 minX / maxY 等属性在 CoreGraphics 里，Linux 的 Foundation 自带
+import CoreGraphics
+#endif
 import Testing
 @testable import VibeSlashCore
 

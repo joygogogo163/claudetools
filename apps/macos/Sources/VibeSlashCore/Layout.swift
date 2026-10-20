@@ -1,6 +1,10 @@
 // 面板位置：贴着输入框弹出，优先放在输入框上方，并保证不超出屏幕可用区域。
 // 与 Windows 版 crates/vibeslash-platform/src/layout.rs 的规则一致。坐标系以左上角为原点、y 向下（与辅助功能 API 相同）。
 import Foundation
+#if canImport(CoreGraphics)
+// macOS 上 CGRect 的 minX / maxY 等属性在 CoreGraphics 里，Linux 的 Foundation 自带
+import CoreGraphics
+#endif
 
 private let gap: CGFloat = 8
 

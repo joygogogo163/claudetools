@@ -66,6 +66,22 @@ importers:
 
   apps/macos: {}
 
+  apps/site:
+    dependencies:
+      '@vibeslash/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+    devDependencies:
+      '@types/node':
+        specifier: 22.18.0
+        version: 22.18.0
+      playwright:
+        specifier: 1.56.1
+        version: 1.56.1
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+
   apps/windows:
     dependencies:
       '@tauri-apps/api':

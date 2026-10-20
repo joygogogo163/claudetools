@@ -8,7 +8,7 @@
     "dev:ui": "vite",
     "build:ui": "vite build",
     "dev": "tauri dev",
-    "build": "tauri build",
+    "build:app": "tauri build",
     "typecheck": "svelte-check --tsconfig ./tsconfig.json --fail-on-warnings",
     "tauri": "tauri",
     "test": "vitest run",
