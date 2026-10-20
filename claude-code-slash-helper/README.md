@@ -20,12 +20,29 @@ Chrome / Edge 扩展，在 [Claude Code 网页版](https://claude.ai/code)里快
 
 ## 安装
 
-1. 下载或克隆本仓库。
+1. 到仓库的 [Releases](https://github.com/joygogogo163/claudetools/releases) 页面下载最新的 `claude-code-slash-helper-v*.zip`，解压到一个固定的目录（之后不要删除或移动它）。
 2. 打开 `chrome://extensions`（Edge 为 `edge://extensions`），开启右上角的「开发者模式」。
-3. 点「加载已解压的扩展程序」，选择 `claude-code-slash-helper/extension` 目录。
+3. 点「加载已解压的扩展程序」，选择解压出来的目录（里面直接就是 `manifest.json`）。
 4. 刷新已经打开的 claude.ai/code 页面。
 
-更新代码后，在扩展管理页点这个扩展的刷新按钮，然后刷新 claude.ai 页面。
+也可以克隆本仓库，第 3 步直接选择 `claude-code-slash-helper/extension` 目录。
+
+升级时把新版本解压覆盖到原目录，在扩展管理页点这个扩展的刷新按钮，然后刷新 claude.ai 页面。
+
+## 打包
+
+```bash
+cd claude-code-slash-helper
+npm run pack
+```
+
+生成 `dist/claude-code-slash-helper-v<版本号>.zip`，`manifest.json` 在压缩包根目录，可以直接分发，也可以上传到 Chrome 应用商店。打包脚本不依赖第三方包，会先检查 `manifest.json` 和 `package.json` 的版本号是否一致。
+
+GitHub Actions 每次推送都会跑测试并打包，zip 作为构建产物（Artifacts）保存在对应的运行记录里。发布正式版本：
+
+1. 同时修改 `extension/manifest.json` 和 `package.json` 里的 `version`，提交并推送。
+2. 推送标签 `slash-helper-v<版本号>`，例如 `git tag slash-helper-v1.0.1 && git push origin slash-helper-v1.0.1`。
+3. 工作流会校验标签与版本号一致，然后创建 Release 并附上 zip。
 
 ## 收录的指令
 

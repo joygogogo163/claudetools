@@ -1,0 +1,55 @@
+name: claude-code-slash-helper
+
+on:
+  push:
+    branches: ['**']
+    tags: ['slash-helper-v*']
+  pull_request:
+    paths:
+      - 'claude-code-slash-helper/**'
+      - '.github/workflows/slash-helper.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    working-directory: claude-code-slash-helper
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: claude-code-slash-helper/package-lock.json
+
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm test
+      - run: npm run pack
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: claude-code-slash-helper
+          path: claude-code-slash-helper/dist/*.zip
+
+      - name: 发布 Release
+        if: startsWith(github.ref, 'refs/tags/slash-helper-v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          version="$(node -p "require('./extension/manifest.json').version")"
+          if [ "$TAG" != "slash-helper-v$version" ]; then
+            echo "标签 $TAG 与 manifest.json 的版本 $version 不一致" >&2
+            exit 1
+          fi
+          gh release create "$TAG" dist/*.zip \
+            --title "Claude Code 指令助手 v$version" \
+            --notes "下载 claude-code-slash-helper-v$version.zip，解压后在 chrome://extensions 开启开发者模式，点「加载已解压的扩展程序」选择解压出来的目录。"
