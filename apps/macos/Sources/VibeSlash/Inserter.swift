@@ -46,6 +46,13 @@ enum Inserter {
         }
     }
 
+    /// 按 count 次退格，删掉触发面板时输入的斜杠
+    static func deleteBackward(_ count: Int) async {
+        await waitForModifiersReleased()
+        for _ in 0..<count { press(CGKeyCode(kVK_Delete), flags: []) }
+        try? await Task.sleep(for: .milliseconds(30))
+    }
+
     /// 等用户松开 ⌘⌥⌃⇧，避免和模拟的按键叠在一起（例如 ⌘↩ 变成别的快捷键）
     private static func waitForModifiersReleased() async {
         let modifiers: CGEventFlags = [.maskCommand, .maskAlternate, .maskControl, .maskShift]

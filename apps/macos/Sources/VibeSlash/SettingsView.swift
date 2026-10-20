@@ -1,4 +1,4 @@
-// 设置窗口：快捷键、插入方式、权限、登录启动，以及识别规则和商标声明。
+// 设置窗口：快捷键、输入 / 弹出、悬浮按钮、插入方式、权限、登录启动，以及识别规则和商标声明。
 import AppKit
 import Carbon.HIToolbox
 import Combine
@@ -12,7 +12,7 @@ final class SettingsWindowController {
 
     init(settings: AppSettings, changeHotKey: @escaping (HotKeyCombo) -> String?) {
         window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 540, height: 660),
+            contentRect: NSRect(x: 0, y: 0, width: 540, height: 720),
             styleMask: [.titled, .closable, .miniaturizable],
             backing: .buffered,
             defer: true
@@ -57,6 +57,28 @@ struct SettingsView: View {
                     Text(hotKeyMessage).font(.caption).foregroundStyle(.red)
                 }
                 Text("在 Claude、ChatGPT 桌面 App 或终端里按下快捷键，面板会出现在输入框旁边，选中的指令直接插入。")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Section("输入 / 弹出") {
+                Toggle("在 Claude、ChatGPT 桌面 App 的输入框开头输入 / 时，直接弹出指令面板", isOn: $settings.slashTrigger)
+                Text("和浏览器扩展一样：打出的 / 会在插入指令时自动删掉，按 Esc 则保留。中文输入法打出的「、」也算。终端里的 Claude Code、Codex 自带指令菜单，所以只在桌面 App 里生效。需要「辅助功能」权限。")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Section("悬浮按钮") {
+                Picker("显示", selection: $settings.launcher) {
+                    Text("自动（推荐）：Claude、ChatGPT 桌面 App 在前台时显示").tag(LauncherMode.auto)
+                    Text("一直显示").tag(LauncherMode.always)
+                    Text("不显示").tag(LauncherMode.off)
+                }
+                .pickerStyle(.radioGroup)
+                if settings.launcherPosition != nil {
+                    Button("重置按钮位置") { settings.launcherPosition = nil }
+                }
+                Text("屏幕上的 / 小圆钮，点一下打开指令面板；按住可以拖到任意位置，右键打开设置。")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -121,7 +143,7 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 540, height: 660)
+        .frame(width: 540, height: 720)
         .onReceive(timer) { _ in trusted = Inserter.isTrusted }
     }
 }

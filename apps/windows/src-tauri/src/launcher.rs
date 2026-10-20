@@ -23,6 +23,8 @@ pub struct LauncherState {
     /// 拖动时位置变化很频繁，停下 600ms 后才保存
     moves: AtomicU64,
     moved_to: Mutex<Option<[i32; 2]>>,
+    /// 程序自己摆放的位置；移到这里不算用户拖动，不保存
+    placed: Mutex<Option<[i32; 2]>>,
 }
 
 fn launcher<R: Runtime>(app: &AppHandle<R>) -> Option<WebviewWindow<R>> {
@@ -59,6 +61,7 @@ fn place<R: Runtime>(app: &AppHandle<R>, window: &WebviewWindow<R>) {
         ))
     });
     if let Some(position) = position {
+        *app.state::<LauncherState>().placed.lock().unwrap() = Some([position.x, position.y]);
         let _ = window.set_position(position);
     }
 }
@@ -120,7 +123,7 @@ pub fn on_foreground<R: Runtime>(app: &AppHandle<R>, window: isize) {
 /// 按钮被拖动了：停下来后保存位置
 pub fn on_moved<R: Runtime>(app: &AppHandle<R>, position: PhysicalPosition<i32>) {
     let state = app.state::<LauncherState>();
-    if !state.visible.load(Ordering::Relaxed) {
+    if !state.visible.load(Ordering::Relaxed) || *state.placed.lock().unwrap() == Some([position.x, position.y]) {
         return;
     }
     *state.moved_to.lock().unwrap() = Some([position.x, position.y]);
