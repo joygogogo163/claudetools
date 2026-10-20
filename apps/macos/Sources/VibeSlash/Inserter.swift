@@ -10,7 +10,8 @@ enum Inserter {
 
     /// 弹出系统的授权提示
     static func requestTrust() {
-        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+        // kAXTrustedCheckOptionPrompt 的值；直接引用那个 C 全局变量在 Swift 6 严格并发下会报错
+        let options = ["AXTrustedCheckOptionPrompt": true] as CFDictionary
         _ = AXIsProcessTrustedWithOptions(options)
     }
 
