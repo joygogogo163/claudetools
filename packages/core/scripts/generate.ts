@@ -2,6 +2,7 @@
 // - generated/catalog.json：全部工具的分类和指令
 // - generated/search-cases.json：搜索用例，原生端的搜索实现必须得出同样的结果
 // - generated/desktop-cases.json：识别前台客户端的用例，原生端的识别实现必须得出同样的结果
+// 同时复制一份到 apps/macos（SwiftPM 资源）。
 // 用法：node scripts/generate.ts（写入）；node scripts/generate.ts --check（只检查是否最新）
 import fs from 'node:fs';
 import path from 'node:path';
@@ -11,7 +12,15 @@ import { DESKTOP_RULES, detectDesktop, type ForegroundSnapshot } from '../src/de
 import { search } from '../src/search.ts';
 import type { Usage } from '../src/types.ts';
 
-const outDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'generated');
+const coreDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+const outDir = path.join(coreDir, 'generated');
+// SwiftPM 的资源必须放在 target 目录里，给 macOS 版复制一份
+const swiftDir = path.join(coreDir, '..', '..', 'apps', 'macos');
+const COPIES: Record<string, string[]> = {
+  'catalog.json': [path.join(swiftDir, 'Sources', 'VibeSlashCore', 'Resources', 'catalog.json')],
+  'search-cases.json': [path.join(swiftDir, 'Tests', 'VibeSlashCoreTests', 'Resources', 'search-cases.json')],
+  'desktop-cases.json': [path.join(swiftDir, 'Tests', 'VibeSlashCoreTests', 'Resources', 'desktop-cases.json')],
+};
 
 const catalog = {
   version: 1,
@@ -71,18 +80,20 @@ const files = {
 
 const check = process.argv.includes('--check');
 let stale = false;
-fs.mkdirSync(outDir, { recursive: true });
 for (const [name, content] of Object.entries(files)) {
-  const file = path.join(outDir, name);
-  const current = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
-  if (current === content) continue;
-  if (check) {
-    console.error(`generated/${name} 不是最新的，请运行 pnpm --filter @vibeslash/core generate`);
-    stale = true;
-  } else {
-    fs.writeFileSync(file, content);
-    console.log(`已写入 generated/${name}`);
+  for (const file of [path.join(outDir, name), ...(COPIES[name] ?? [])]) {
+    const shown = path.relative(path.join(coreDir, '..', '..'), file);
+    const current = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
+    if (current === content) continue;
+    if (check) {
+      console.error(`${shown} 不是最新的，请运行 pnpm generate`);
+      stale = true;
+    } else {
+      fs.mkdirSync(path.dirname(file), { recursive: true });
+      fs.writeFileSync(file, content);
+      console.log(`已写入 ${shown}`);
+    }
   }
 }
 if (stale) process.exit(1);
-if (check) console.log('generated/ 是最新的');
+if (check) console.log('生成的数据都是最新的');

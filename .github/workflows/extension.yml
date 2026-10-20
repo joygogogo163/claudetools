@@ -33,6 +33,8 @@ jobs:
       - run: pnpm check
       - run: pnpm typecheck
       - run: pnpm test
+      - name: Windows 版界面交互测试
+        run: pnpm --filter @vibeslash/windows test:ui
       - run: pnpm zip
         working-directory: apps/extension
 
