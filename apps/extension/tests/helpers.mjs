@@ -51,8 +51,10 @@ export async function launchBrowser(options = {}) {
     ...options,
     args: [`--disable-extensions-except=${extensionDir}`, `--load-extension=${extensionDir}`],
   });
-  let [worker] = context.serviceWorkers();
-  if (!worker) worker = await context.waitForEvent('serviceworker');
+  // 浏览器自带的组件也可能启动 Service Worker，要找的是本扩展的 background.js
+  const isOurs = (w) => w.url().startsWith('chrome-extension://') && w.url().endsWith('/background.js');
+  let worker = context.serviceWorkers().find(isOurs);
+  if (!worker) worker = await context.waitForEvent('serviceworker', { predicate: isOurs });
   const extensionId = new URL(worker.url()).host;
   const close = async () => {
     await context.close();
