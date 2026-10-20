@@ -1,0 +1,33 @@
+{
+  "name": "@vibeslash/windows",
+  "version": "0.1.0",
+  "private": true,
+  "description": "VibeSlash 指令助手 Windows 版：Rust + Tauri 2，界面用 Svelte 5",
+  "type": "module",
+  "scripts": {
+    "dev:ui": "vite",
+    "build:ui": "vite build",
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "typecheck": "svelte-check --tsconfig ./tsconfig.json --fail-on-warnings",
+    "tauri": "tauri",
+    "test": "vitest run",
+    "test:ui": "vite build && node --test tests/ui.test.mjs",
+    "screenshots": "vite build && node tests/screenshots.mjs"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "2.12.4",
+    "@vibeslash/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "7.3.1",
+    "@tauri-apps/cli": "2.12.3",
+    "@tsconfig/svelte": "5.0.8",
+    "svelte": "5.57.2",
+    "svelte-check": "4.7.7",
+    "typescript": "5.9.3",
+    "vite": "8.3.4",
+    "vitest": "3.2.4",
+    "playwright": "1.56.1"
+  }
+}

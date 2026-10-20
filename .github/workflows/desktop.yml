@@ -1,0 +1,100 @@
+name: desktop
+
+on:
+  push:
+    branches: ['**']
+    tags: ['desktop-v*']
+    paths:
+      - 'apps/windows/**'
+      - 'apps/macos/**'
+      - 'packages/core/**'
+      - 'assets/**'
+      - '.github/workflows/desktop.yml'
+  pull_request:
+    paths:
+      - 'apps/windows/**'
+      - 'apps/macos/**'
+      - 'packages/core/**'
+      - '.github/workflows/desktop.yml'
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 创建 Release（标签 desktop-v<版本号>，附上 Windows 安装包）
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: apps/windows
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/windows
+
+      - run: pnpm install --frozen-lockfile
+      - name: Rust 测试（识别规则、窗口位置、子进程）
+        run: cargo test --workspace --exclude vibeslash
+      - name: 界面测试
+        run: pnpm test
+      # Tauri 编译时要嵌入界面，先构建界面再跑 clippy
+      - run: pnpm build:ui
+      - run: cargo clippy --workspace -- -D warnings
+      - name: 构建安装包
+        run: pnpm tauri build
+
+      - name: 整理产物
+        shell: pwsh
+        run: |
+          $version = (Get-Content package.json | ConvertFrom-Json).version
+          New-Item -ItemType Directory -Force out | Out-Null
+          Copy-Item target/release/bundle/nsis/*.exe "out/VibeSlash-$version-windows-x64-setup.exe"
+          Compress-Archive -Path target/release/VibeSlash.exe -DestinationPath "out/VibeSlash-$version-windows-x64-portable.zip"
+          Get-ChildItem out | Format-Table Name, Length
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vibeslash-windows
+          path: apps/windows/out/*
+
+  release:
+    needs: [windows]
+    if: startsWith(github.ref, 'refs/tags/desktop-v') || inputs.release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+          merge-multiple: true
+      - name: 发布 Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="$(node -p "require('./apps/windows/package.json').version")"
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            tag="$GITHUB_REF_NAME"
+            [ "$tag" = "desktop-v$version" ] || { echo "标签 $tag 与版本 $version 不一致" >&2; exit 1; }
+          else
+            tag="desktop-v$version"
+          fi
+          gh release create "$tag" out/* \
+            --target "$GITHUB_SHA" \
+            --prerelease \
+            --title "VibeSlash 指令助手 桌面版 v$version" \
+            --notes "Claude Code、Codex 命令速查表：不用背命令，按一下就出来。
+
+          - Windows：下载 \`VibeSlash-$version-windows-x64-setup.exe\` 安装，或下载 portable.zip 解压直接运行。启动后在托盘运行，默认快捷键 Alt + /。
+
+          这是预览版，安装包暂未签名，Windows 可能提示「未知发布者」，点「更多信息」→「仍要运行」。"

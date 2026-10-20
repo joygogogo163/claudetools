@@ -688,8 +688,8 @@
             "ide",
             "desktop"
           ],
-          "desc": "对自动审查最近拒绝的一个操作，批准重试一次。",
-          "usage": "自动审查拦下了你确认安全的命令时使用；只重试一次，不改变权限设置。",
+          "desc": "对自动审核最近拒绝的一个操作，批准重试一次。",
+          "usage": "自动审核拦下了你确认安全的命令时使用；只重试一次，不改变权限设置。",
           "example": "/approve"
         },
         {
@@ -1207,5 +1207,155 @@
         }
       ]
     }
-  ]
+  ],
+  "desktop": {
+    "apps": [
+      {
+        "client": "claude-code",
+        "name": "Claude",
+        "mac": [
+          "com.anthropic.claudefordesktop"
+        ],
+        "packages": [
+          "Claude_"
+        ],
+        "exes": [
+          "claude"
+        ]
+      },
+      {
+        "client": "codex",
+        "name": "ChatGPT",
+        "mac": [
+          "com.openai.codex"
+        ],
+        "packages": [
+          "OpenAI.Codex_"
+        ],
+        "exes": [
+          "chatgpt",
+          "codex"
+        ]
+      }
+    ],
+    "terminals": {
+      "mac": [
+        "com.apple.Terminal",
+        "com.googlecode.iterm2",
+        "dev.warp.Warp-Stable",
+        "com.mitchellh.ghostty",
+        "net.kovidgoyal.kitty",
+        "org.alacritty",
+        "com.github.wez.wezterm",
+        "co.zeit.hyper",
+        "org.tabby"
+      ],
+      "windows": [
+        "windowsterminal",
+        "openconsole",
+        "conhost",
+        "cmd",
+        "powershell",
+        "pwsh",
+        "wezterm-gui",
+        "alacritty",
+        "warp",
+        "tabby",
+        "hyper",
+        "mintty"
+      ]
+    },
+    "editors": {
+      "mac": [
+        "com.microsoft.VSCode",
+        "com.microsoft.VSCodeInsiders",
+        "com.todesktop.230313mzl4w4u92",
+        "com.exafunction.windsurf",
+        "dev.zed.Zed",
+        "com.jetbrains.*"
+      ],
+      "windows": [
+        "code",
+        "code - insiders",
+        "cursor",
+        "windsurf",
+        "zed",
+        "idea64",
+        "pycharm64",
+        "webstorm64",
+        "goland64",
+        "clion64",
+        "rider64",
+        "phpstorm64",
+        "rustrover64"
+      ]
+    },
+    "browsers": {
+      "mac": [
+        "com.google.Chrome",
+        "com.microsoft.edgemac",
+        "com.apple.Safari",
+        "company.thebrowser.Browser",
+        "com.brave.Browser",
+        "org.mozilla.firefox",
+        "com.operasoftware.Opera"
+      ],
+      "windows": [
+        "chrome",
+        "msedge",
+        "brave",
+        "firefox",
+        "arc",
+        "opera"
+      ]
+    },
+    "cli": [
+      {
+        "client": "claude-code",
+        "names": [
+          "claude"
+        ],
+        "args": [
+          "@anthropic-ai/claude-code"
+        ]
+      },
+      {
+        "client": "codex",
+        "names": [
+          "codex"
+        ],
+        "args": [
+          "@openai/codex"
+        ]
+      }
+    ],
+    "titles": [
+      {
+        "client": "claude-code",
+        "words": [
+          "claude"
+        ]
+      },
+      {
+        "client": "codex",
+        "words": [
+          "codex"
+        ]
+      }
+    ],
+    "pageTitles": [
+      {
+        "client": "claude-code",
+        "words": [
+          "claude code"
+        ]
+      },
+      {
+        "client": "codex",
+        "words": [
+          "codex"
+        ]
+      }
+    ]
+  }
 }

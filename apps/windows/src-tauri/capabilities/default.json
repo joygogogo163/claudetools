@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "指令面板和设置页：读写设置、收听面板事件",
+  "windows": ["palette", "settings"],
+  "permissions": ["core:default"]
+}

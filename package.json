@@ -2,7 +2,7 @@
   "name": "vibeslash",
   "private": true,
   "type": "module",
-  "description": "VibeSlash 指令助手：适用于 Claude Code 和 Codex 的斜杠指令中文联想与速查（浏览器扩展、Windows 和 macOS 桌面版）",
+  "description": "VibeSlash 指令助手：Claude Code、Codex 命令速查表，不用背命令，按一下就出来（浏览器扩展、Windows 和 macOS 桌面版）",
   "packageManager": "pnpm@10.28.0",
   "engines": {
     "node": ">=22.18"

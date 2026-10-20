@@ -1,0 +1,11 @@
+[package]
+name = "vibeslash-detect"
+description = "根据前台窗口识别当前是 Claude Code 还是 Codex（与 @vibeslash/core 的 detectDesktop 保持一致）"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true

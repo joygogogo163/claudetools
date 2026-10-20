@@ -5,6 +5,7 @@ import {
   availableIn,
   badges,
   commandsFor,
+  detectDesktop,
   detectPage,
   sanitizeCustom,
   search,
@@ -156,5 +157,33 @@ describe('识别网页', () => {
     ['not a url', null],
   ])('%s', (url, expected) => {
     expect(detectPage(url)).toEqual(expected);
+  });
+});
+
+describe('识别桌面前台客户端', () => {
+  const proc = (name: string, started: number, args = '') => ({ name, args, started });
+
+  test('桌面客户端按应用标识识别', () => {
+    expect(detectDesktop({ platform: 'mac', app: 'com.anthropic.claudefordesktop' })).toMatchObject({ client: 'claude-code', surface: 'desktop' });
+    expect(detectDesktop({ platform: 'windows', app: 'whatever', package: 'OpenAI.Codex_abc' })).toMatchObject({ client: 'codex', surface: 'desktop' });
+    expect(detectDesktop({ platform: 'mac', app: 'com.openai.chat' })).toBeNull();
+  });
+
+  test('终端看标题和子进程，编辑器里的 Codex 是 IDE 环境', () => {
+    expect(detectDesktop({ platform: 'mac', app: 'com.apple.Terminal', processes: [proc('claude', 1)] })).toMatchObject({ client: 'claude-code', surface: 'cli' });
+    expect(detectDesktop({ platform: 'mac', app: 'com.apple.Terminal', title: 'codex', processes: [proc('claude', 1)] })).toMatchObject({ client: 'codex', via: 'title' });
+    expect(detectDesktop({ platform: 'mac', app: 'com.microsoft.VSCode', processes: [proc('codex', 1)] })).toMatchObject({ client: 'codex', surface: 'ide' });
+    expect(detectDesktop({ platform: 'mac', app: 'com.jetbrains.goland', processes: [proc('claude', 1)] })).toMatchObject({ client: 'claude-code', surface: 'cli' });
+  });
+
+  test('Windows 的路径和进程名大小写', () => {
+    const args = 'C:\\npm\\node_modules\\@anthropic-ai\\claude-code\\cli.js';
+    expect(detectDesktop({ platform: 'windows', app: 'WindowsTerminal.exe', processes: [proc('node.exe', 1, args)] })).toMatchObject({ client: 'claude-code' });
+    expect(detectDesktop({ platform: 'windows', app: 'Code.exe', processes: [proc('Codex.exe', 1)] })).toMatchObject({ client: 'codex', surface: 'ide' });
+  });
+
+  test('浏览器只认页面标题，普通 Claude 对话不算', () => {
+    expect(detectDesktop({ platform: 'mac', app: 'com.google.Chrome', title: 'x - Claude Code' })).toMatchObject({ client: 'claude-code', surface: 'web' });
+    expect(detectDesktop({ platform: 'mac', app: 'com.google.Chrome', title: 'Claude' })).toBeNull();
   });
 });

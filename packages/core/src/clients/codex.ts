@@ -143,8 +143,8 @@ const commands: Command[] = [
     name: 'approve',
     cat: 'model',
     surfaces: ALL,
-    desc: '对自动审查最近拒绝的一个操作，批准重试一次。',
-    usage: '自动审查拦下了你确认安全的命令时使用；只重试一次，不改变权限设置。',
+    desc: '对自动审核最近拒绝的一个操作，批准重试一次。',
+    usage: '自动审核拦下了你确认安全的命令时使用；只重试一次，不改变权限设置。',
     example: '/approve',
   },
   {

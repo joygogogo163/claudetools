@@ -1,6 +1,8 @@
 # VibeSlash 指令助手
 
-**适用于 Claude Code 和 Codex 的斜杠命令（/ 指令）中文联想与速查工具**
+**Claude Code、Codex 命令速查表：不用背命令，按一下就出来。**
+
+*Every Claude Code & Codex slash command, one keystroke away — no memorizing.*
 
 [![最新版本](https://img.shields.io/github/v/release/joygogogo163/claudetools?filter=extension-v*&label=%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC)](https://github.com/joygogogo163/claudetools/releases/latest)
 [![下载次数](https://img.shields.io/github/downloads/joygogogo163/claudetools/total?label=%E4%B8%8B%E8%BD%BD)](https://github.com/joygogogo163/claudetools/releases)
@@ -190,7 +192,7 @@
 | `/plan [提示]` | 切换到计划模式，可以顺便带上第一条规划请求。 |  |
 | `/goal [目标\|edit\|pause\|resume\|clear]` | 设置、查看、修改、暂停、恢复或清除任务目标。 |  |
 | `/permissions` | 设置 Codex 哪些操作可以不经确认直接执行。 | 仅终端 |
-| `/approve` | 对自动审查最近拒绝的一个操作，批准重试一次。 |  |
+| `/approve` | 对自动审核最近拒绝的一个操作，批准重试一次。 |  |
 | `/experimental` | 开关实验性功能，例如网络代理、运行时阻止休眠。 | 仅终端 |
 
 #### 审查与改动
@@ -308,6 +310,8 @@
 - [ ] 桌面版（Windows / macOS）：在 Claude 桌面 App、ChatGPT 桌面 App 的 Codex 模式和终端里的 Claude Code / Codex CLI 中，用快捷键呼出命令面板，自动识别当前客户端
 
 ## English
+
+*Every Claude Code & Codex slash command, one keystroke away — no memorizing.*
 
 **VibeSlash** is a free, open-source Chrome / Edge extension that adds slash-command autocomplete and a searchable command palette to [Claude Code on the web](https://claude.ai/code). Type `/` at the start of the prompt to get suggestions, or press `Alt+K` to browse every Claude Code slash command with descriptions, usage notes, examples and web-specific caveats (descriptions are in Chinese). The toolbar popup also works as a quick reference for OpenAI Codex slash commands, showing which ones work in the Codex CLI, the IDE extension and the ChatGPT desktop app. You can add your own commands for either tool. It runs entirely locally: no network requests, no access to your conversations. Desktop apps for Windows and macOS are in development.
 
