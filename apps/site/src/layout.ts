@@ -15,7 +15,7 @@ export const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ESCAPES[c]);
 /** 站内链接：path 相对站点根 */
 export const url = (path = '') => BASE + path;
 
-export type PageKey = 'home' | 'claude-code' | 'codex';
+export type PageKey = 'home' | 'claude-code' | 'codex' | 'deepseek';
 
 /** 某种语言某个页面的路径，例如 ja + codex → ja/codex/ */
 export const pathOf = (locale: Locale, key: PageKey) => STRINGS[locale].prefix + (key === 'home' ? '' : `${key}/`);
@@ -34,6 +34,7 @@ function header(s: Strings, key: PageKey | null): string {
   const nav: [string, string][] = [
     [pathOf(s.locale, 'claude-code'), s.nav.claude],
     [pathOf(s.locale, 'codex'), s.nav.codex],
+    [pathOf(s.locale, 'deepseek'), s.nav.deepseek],
     [`${pathOf(s.locale, 'home')}#download`, s.nav.download],
   ];
   const languages = LOCALES.map((locale) => {
@@ -56,7 +57,7 @@ function header(s: Strings, key: PageKey | null): string {
 function footer(s: Strings): string {
   return `<footer class="site-footer">
   <div class="wrap">
-    <p><a href="${REPO}">GitHub</a> · <a href="${RELEASES}">${esc(s.footer.releases)}</a> · <a href="${url(pathOf(s.locale, 'claude-code'))}">${esc(s.footer.claudeAll)}</a> · <a href="${url(pathOf(s.locale, 'codex'))}">${esc(s.footer.codexAll)}</a></p>
+    <p><a href="${REPO}">GitHub</a> · <a href="${RELEASES}">${esc(s.footer.releases)}</a> · <a href="${url(pathOf(s.locale, 'claude-code'))}">${esc(s.footer.claudeAll)}</a> · <a href="${url(pathOf(s.locale, 'codex'))}">${esc(s.footer.codexAll)}</a> · <a href="${url(pathOf(s.locale, 'deepseek'))}">${esc(s.footer.deepseekAll)}</a></p>
     <p class="legal">${esc(s.disclaimer)}</p>
   </div>
 </footer>`;

@@ -530,4 +530,43 @@ export const en: Translation = {
       },
     },
   },
+  deepseek: {
+    categories: {
+      mode: 'Modes & permissions',
+      context: 'Context',
+      session: 'Session',
+    },
+    commands: {
+      plan: {
+        desc: 'Enters or leaves plan mode: it proposes a plan first and only edits after you confirm.',
+        usage: 'Type /plan to enter plan mode; add a message to enter plan mode and send it; /plan off leaves.',
+        args: '[off|message]',
+        example: '/plan split the login module into its own service',
+      },
+      goal: {
+        desc: 'Sets or shows the goal of a long-running task; Harness keeps working toward it.',
+        usage: 'Without arguments it shows the current goal; clear removes it, edit changes it, pause / resume stop and continue.',
+        args: '[goal|clear|edit <goal>|pause|resume]',
+        example: '/goal make all unit tests pass and add the missing ones',
+      },
+      permission: {
+        desc: 'Switches the permission preset (sandbox mode plus approval policy).',
+        usage: 'Presets are workspace-write (edits only inside the workspace) and danger-full-access (no restrictions, use with care); auto can be added in the config.',
+        args: '<preset>',
+      },
+      compact: {
+        desc: 'Compacts older conversation history to free up context space.',
+        usage: 'Use when the conversation is long or responses slow down; older turns are summarized.',
+      },
+      export: {
+        desc: 'Downloads this session’s log as a ZIP archive.',
+        usage: 'Use to keep a record of the session or to attach logs when reporting a problem.',
+      },
+      feedback: {
+        desc: 'Records feedback about this session.',
+        args: '<text>',
+        example: '/feedback the generated tests miss the error branches',
+      },
+    },
+  },
 };

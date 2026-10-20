@@ -530,4 +530,43 @@ export const ko: Translation = {
       },
     },
   },
+  deepseek: {
+    categories: {
+      mode: '모드와 권한',
+      context: '컨텍스트',
+      session: '세션',
+    },
+    commands: {
+      plan: {
+        desc: '플랜 모드에 들어가거나 나옵니다. 먼저 계획을 제시하고 확인 후에 수정합니다.',
+        usage: '/plan만 입력하면 플랜 모드에 들어갑니다. 메시지를 붙이면 플랜 모드로 들어가며 그 메시지를 보냅니다. /plan off로 나옵니다.',
+        args: '[off|메시지]',
+        example: '/plan 로그인 모듈을 별도 서비스로 분리해 줘',
+      },
+      goal: {
+        desc: '장기 작업의 목표를 설정하거나 확인합니다. Harness는 목표를 향해 계속 작업합니다.',
+        usage: '인수 없이 현재 목표를 표시합니다. clear는 삭제, edit는 수정, pause / resume은 일시 중지와 재개입니다.',
+        args: '[목표|clear|edit <목표>|pause|resume]',
+        example: '/goal 모든 단위 테스트를 통과시키고 빠진 테스트를 추가해 줘',
+      },
+      permission: {
+        desc: '권한 프리셋(샌드박스 모드와 승인 정책)을 전환합니다.',
+        usage: '프리셋은 workspace-write(워크스페이스 안에서만 수정)와 danger-full-access(제한 없음, 주의해서 사용)이며, 설정에서 auto를 추가할 수 있습니다.',
+        args: '<프리셋>',
+      },
+      compact: {
+        desc: '오래된 대화 기록을 압축해 컨텍스트 공간을 확보합니다.',
+        usage: '대화가 길어지거나 응답이 느려질 때 사용합니다. 오래된 내용은 요약됩니다.',
+      },
+      export: {
+        desc: '이 세션의 로그를 ZIP 파일로 내려받습니다.',
+        usage: '세션 기록을 남기거나 문제를 보고할 때 로그를 첨부하려면 사용합니다.',
+      },
+      feedback: {
+        desc: '이 세션에 대한 피드백을 기록합니다.',
+        args: '<내용>',
+        example: '/feedback 생성된 테스트가 예외 분기를 다루지 않음',
+      },
+    },
+  },
 };

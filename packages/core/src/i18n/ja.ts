@@ -530,4 +530,43 @@ export const ja: Translation = {
       },
     },
   },
+  deepseek: {
+    categories: {
+      mode: 'モードと権限',
+      context: 'コンテキスト',
+      session: 'セッション',
+    },
+    commands: {
+      plan: {
+        desc: 'プランモードに入る／抜けます。まず計画を示し、確認してから変更します。',
+        usage: '/plan だけでプランモードに入ります。メッセージを付けるとプランモードに入ってそのメッセージを送ります。/plan off で抜けます。',
+        args: '[off|メッセージ]',
+        example: '/plan ログインモジュールを独立したサービスに分割して',
+      },
+      goal: {
+        desc: '長時間タスクの目標を設定・表示します。Harness は目標に向けて作業を続けます。',
+        usage: '引数なしで現在の目標を表示。clear で削除、edit で変更、pause / resume で一時停止と再開。',
+        args: '[目標|clear|edit <目標>|pause|resume]',
+        example: '/goal すべての単体テストを通し、不足しているテストを追加して',
+      },
+      permission: {
+        desc: '権限プリセット（サンドボックスモードと承認ポリシー）を切り替えます。',
+        usage: 'プリセットは workspace-write（ワークスペース内のみ変更可）と danger-full-access（制限なし、注意して使用）。設定で auto も追加できます。',
+        args: '<プリセット>',
+      },
+      compact: {
+        desc: '古い会話履歴を圧縮してコンテキストの空きを確保します。',
+        usage: '会話が長くなったり応答が遅くなったときに使います。古いやり取りは要約されます。',
+      },
+      export: {
+        desc: 'このセッションのログを ZIP でダウンロードします。',
+        usage: 'セッションの記録を残したいときや、問題報告にログを添付するときに使います。',
+      },
+      feedback: {
+        desc: 'このセッションについてのフィードバックを記録します。',
+        args: '<内容>',
+        example: '/feedback 生成されたテストが例外系をカバーしていない',
+      },
+    },
+  },
 };

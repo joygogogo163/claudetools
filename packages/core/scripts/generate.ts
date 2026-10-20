@@ -63,6 +63,8 @@ const SNAPSHOTS: [string, ForegroundSnapshot][] = [
   ['不认识的应用', { platform: 'mac', app: 'com.apple.finder', title: 'Downloads' }],
   ['Windows Claude（应用包）', { platform: 'windows', app: 'claude', package: 'Claude_pzs8sxrjxfjjc', title: 'Claude' }],
   ['Windows ChatGPT（应用包）', { platform: 'windows', app: 'chatgpt', package: 'OpenAI.Codex_2p2nqsd0c76g0', title: 'ChatGPT' }],
+  ['macOS DeepSeek Harness 桌面 App', { platform: 'mac', app: 'com.deepseek.harness', title: 'DeepSeek Harness' }],
+  ['Windows DeepSeek Harness 桌面 App', { platform: 'windows', app: 'DeepSeek Harness.exe', title: 'DeepSeek Harness' }],
   ['Windows ChatGPT（没有应用包信息）', { platform: 'windows', app: 'ChatGPT.exe', title: 'ChatGPT' }],
   ['Windows Terminal 里跑 codex', { platform: 'windows', app: 'windowsterminal', title: 'PowerShell', processes: [proc('pwsh.exe', 1), proc('codex.exe', 3)] }],
   ['Windows 上 Node 方式安装的 claude', { platform: 'windows', app: 'WindowsTerminal.exe', processes: [proc('node.exe', 2, 'C:\\Users\\a\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\cli.js')] }],

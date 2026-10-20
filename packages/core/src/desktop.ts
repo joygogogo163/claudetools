@@ -68,6 +68,14 @@ export const DESKTOP_RULES: DesktopRules = {
       packages: ['OpenAI.Codex_'],
       exes: ['chatgpt', 'codex'],
     },
+    {
+      // DeepSeek Harness 桌面 App（Electron）。Windows 版用 NSIS 安装，没有应用包，按进程名识别
+      client: 'deepseek',
+      name: 'DeepSeek Harness',
+      mac: ['com.deepseek.harness'],
+      packages: [],
+      exes: ['deepseek harness'],
+    },
   ],
   terminals: {
     mac: [

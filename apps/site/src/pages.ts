@@ -1,4 +1,4 @@
-// 页面内容：首页、Claude Code 命令大全、Codex 命令大全、404。四种语言共用同一套结构，文字来自 strings.ts。
+// 页面内容：首页、Claude Code / Codex / DeepSeek 命令大全、404。四种语言共用同一套结构，文字来自 strings.ts。
 import { SURFACE_LABELS_I18N, availableIn, clientIn, type ClientId, type Command } from '@vibeslash/core';
 import { RELEASES, REPO, esc, page, pathOf, url } from './layout.ts';
 import type { Strings } from './strings.ts';
@@ -6,8 +6,13 @@ import type { Strings } from './strings.ts';
 /** 截图尺寸写进 img 标签，避免加载时页面跳动 */
 export type Shots = Record<string, { width: number; height: number }>;
 
-const CLIENT_IDS: ClientId[] = ['claude-code', 'codex'];
-const DOWNLOAD_LINKS = [`${RELEASES}?q=extension`, `${RELEASES}?q=desktop`, `${RELEASES}?q=desktop`];
+const CLIENT_IDS: ClientId[] = ['claude-code', 'codex', 'deepseek'];
+
+/** 「某工具命令大全」的标题 */
+const allTitle = (s: Strings, id: ClientId) =>
+  ({ 'claude-code': s.footer.claudeAll, codex: s.footer.codexAll, deepseek: s.footer.deepseekAll })[id];
+/** 扩展、Windows 版、macOS 版都在同一个 Release 里 */
+const DOWNLOAD_LINKS = [`${RELEASES}/latest`, `${RELEASES}/latest`, `${RELEASES}/latest`];
 
 const img = (shots: Shots, file: string, alt: string, eager = false) => {
   const s = shots[file];
@@ -92,7 +97,7 @@ export function home(s: Strings, shots: Shots): string {
   <div class="cards">
     ${CLIENT_IDS.map((id) => {
       const c = clientIn(id, s.locale);
-      return `<a class="card" href="${url(pathOf(s.locale, id))}"><h3>${esc(id === 'claude-code' ? s.footer.claudeAll : s.footer.codexAll)}</h3><p>${esc(h.referenceCard(c.name, c.commands.length, c.categories.map((x) => x.label)))}</p><span class="cta">${esc(h.viewAll)}</span></a>`;
+      return `<a class="card" href="${url(pathOf(s.locale, id))}"><h3>${esc(allTitle(s, id))}</h3><p>${esc(h.referenceCard(c.name, c.commands.length, c.categories.map((x) => x.label)))}</p><span class="cta">${esc(h.viewAll)}</span></a>`;
     }).join('\n    ')}
   </div>
 </section>
@@ -164,9 +169,9 @@ export function commandsPage(s: Strings, id: ClientId): string {
     })
     .join('\n');
   const body = `<div class="wrap doc">
-  <nav class="crumbs" aria-label="${esc(c.crumbLabel)}"><a href="${url(pathOf(s.locale, 'home'))}">${esc(c.home)}</a> › ${esc(id === 'claude-code' ? s.footer.claudeAll : s.footer.codexAll)}</nav>
+  <nav class="crumbs" aria-label="${esc(c.crumbLabel)}"><a href="${url(pathOf(s.locale, 'home'))}">${esc(c.home)}</a> › ${esc(allTitle(s, id))}</nav>
   <h1>${esc(c.h1(client.name))}</h1>
-  <p class="lead">${c.intro(id, client.commands.length, client.docs)}</p>
+  <p class="lead">${c.intro(id, client.commands.length, client.docs, url(pathOf(s.locale, 'claude-code')))}</p>
   <aside class="promo">${c.promo(id, url(`${pathOf(s.locale, 'home')}#download`))}</aside>
   <nav class="toc" aria-label="${esc(c.tocLabel)}"><ul>${toc}</ul></nav>
   ${sections}
@@ -188,7 +193,7 @@ export function commandsPage(s: Strings, id: ClientId): string {
           '@type': 'BreadcrumbList',
           itemListElement: [
             { '@type': 'ListItem', position: 1, name: s.siteName, item: url(pathOf(s.locale, 'home')) },
-            { '@type': 'ListItem', position: 2, name: id === 'claude-code' ? s.footer.claudeAll : s.footer.codexAll, item: url(pathOf(s.locale, id)) },
+            { '@type': 'ListItem', position: 2, name: allTitle(s, id), item: url(pathOf(s.locale, id)) },
           ],
         },
         {

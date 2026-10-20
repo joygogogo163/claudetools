@@ -1,4 +1,4 @@
-//! 根据前台窗口判断当前是哪个工具（Claude Code / Codex）、哪个运行环境。
+//! 根据前台窗口判断当前是哪个工具（Claude Code / Codex / DeepSeek）、哪个运行环境。
 //!
 //! 规则来自 `packages/core/generated/catalog.json`，算法与 `@vibeslash/core` 的 `detectDesktop` 一致，
 //! 用 `desktop-cases.json` 里的用例保证结果相同。改规则请改 TypeScript 那边再重新生成。
@@ -13,6 +13,7 @@ const CATALOG: &str = include_str!("../../../../../packages/core/generated/catal
 pub enum ClientId {
     ClaudeCode,
     Codex,
+    Deepseek,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

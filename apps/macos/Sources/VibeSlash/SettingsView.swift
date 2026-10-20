@@ -62,7 +62,7 @@ struct SettingsView: View {
             }
 
             Section("输入 / 弹出") {
-                Toggle("在 Claude、ChatGPT 桌面 App 的输入框开头输入 / 时，直接弹出指令面板", isOn: $settings.slashTrigger)
+                Toggle("在 Claude、ChatGPT、DeepSeek Harness 桌面 App 的输入框开头输入 / 时，直接弹出指令面板", isOn: $settings.slashTrigger)
                 Text("和浏览器扩展一样：打出的 / 会在插入指令时自动删掉，按 Esc 则保留。中文输入法打出的「、」也算。终端里的 Claude Code、Codex 自带指令菜单，所以只在桌面 App 里生效。需要「辅助功能」权限。")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -70,7 +70,7 @@ struct SettingsView: View {
 
             Section("悬浮按钮") {
                 Picker("显示", selection: $settings.launcher) {
-                    Text("自动（推荐）：Claude、ChatGPT 桌面 App 在前台时显示").tag(LauncherMode.auto)
+                    Text("自动（推荐）：Claude、ChatGPT、DeepSeek Harness 桌面 App 在前台时显示").tag(LauncherMode.auto)
                     Text("一直显示").tag(LauncherMode.always)
                     Text("不显示").tag(LauncherMode.off)
                 }
@@ -137,7 +137,7 @@ struct SettingsView: View {
 
             Section {
                 Text("版本 \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "开发版")")
-                Text("Claude 和 Claude Code 是 Anthropic, PBC 的商标；Codex 和 ChatGPT 是 OpenAI 的商标。VibeSlash 是独立的第三方开源工具，与 Anthropic、OpenAI 没有关联，也未获得其认可或赞助；提及相关名称仅为说明兼容性。")
+                Text("Claude 和 Claude Code 是 Anthropic, PBC 的商标；Codex 和 ChatGPT 是 OpenAI 的商标；DeepSeek 是其权利人的商标。VibeSlash 是独立的第三方开源工具，与 Anthropic、OpenAI、DeepSeek 没有关联，也未获得其认可或赞助；提及相关名称仅为说明兼容性。")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

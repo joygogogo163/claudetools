@@ -1,4 +1,4 @@
-// 工具栏弹出页：速查 Claude Code 和 Codex 的指令。
+// 工具栏弹出页：速查 Claude Code、Codex 和 DeepSeek 的指令。
 // 按当前标签页自动选择工具；在 Claude Code 网页版上点击即插入，其他情况复制到剪贴板。
 (async () => {
   const C = globalThis.CSH;
@@ -49,6 +49,7 @@
         ? 'ChatGPT 网页版有自己的指令菜单，Codex 的斜杠指令不在这里生效。点击复制后，可在 Codex CLI、IDE 扩展或 ChatGPT 桌面 App 中使用。'
         : '点击复制，在 Codex CLI、IDE 扩展或 ChatGPT 桌面 App 中粘贴使用。';
     }
+    if (client === 'deepseek') return '点击复制，在 DeepSeek Harness 的 Web 界面或桌面 App 中粘贴使用。';
     return '当前标签页不是 Claude Code 网页版，点击指令会复制到剪贴板。';
   }
 
@@ -163,9 +164,10 @@
       event.preventDefault();
       choose(index);
     } else if (event.key === 'Tab' && !event.shiftKey) {
-      // Tab 在两个工具之间切换
+      // Tab 在几个工具之间轮流切换
       event.preventDefault();
-      selectClient(client === 'claude-code' ? 'codex' : 'claude-code');
+      const ids = C.CLIENTS.map((c) => c.id);
+      selectClient(ids[(ids.indexOf(client) + 1) % ids.length]);
     }
   });
   list.addEventListener('click', (event) => {

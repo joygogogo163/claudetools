@@ -33,14 +33,15 @@ for (const [name, source] of Object.entries(SHOTS)) {
   fs.writeFileSync(path.join(dist, 'img', name), data);
 }
 
-// 每种语言三个页面；404 只有一个，放在根目录（GitHub Pages 的约定）
-const KEYS: PageKey[] = ['home', 'claude-code', 'codex'];
+// 每种语言四个页面（首页和三个命令大全）；404 只有一个，放在根目录（GitHub Pages 的约定）
+const KEYS: PageKey[] = ['home', 'claude-code', 'codex', 'deepseek'];
 const pages: Record<string, string> = { '404.html': notFound(STRINGS['zh-CN']) };
 for (const locale of LOCALES) {
   const s = STRINGS[locale];
   pages[`${pathOf(locale, 'home')}index.html`] = home(s, shots);
   pages[`${pathOf(locale, 'claude-code')}index.html`] = commandsPage(s, 'claude-code');
   pages[`${pathOf(locale, 'codex')}index.html`] = commandsPage(s, 'codex');
+  pages[`${pathOf(locale, 'deepseek')}index.html`] = commandsPage(s, 'deepseek');
 }
 for (const [file, html] of Object.entries(pages)) {
   fs.mkdirSync(path.dirname(path.join(dist, file)), { recursive: true });

@@ -4,6 +4,7 @@ import Foundation
 public enum ClientID: String, Codable, Sendable, CaseIterable, Hashable {
     case claudeCode = "claude-code"
     case codex
+    case deepseek
 }
 
 /// 运行环境：网页版、桌面版、终端、IDE

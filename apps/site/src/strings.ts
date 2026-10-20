@@ -10,8 +10,8 @@ export interface Strings {
   langName: string;
   siteName: string;
   tagline: string;
-  nav: { claude: string; codex: string; download: string; language: string };
-  footer: { releases: string; claudeAll: string; codexAll: string };
+  nav: { claude: string; codex: string; deepseek: string; download: string; language: string };
+  footer: { releases: string; claudeAll: string; codexAll: string; deepseekAll: string };
   disclaimer: string;
   home: {
     title: string;
@@ -54,7 +54,8 @@ export interface Strings {
     h1: (name: string) => string;
     home: string;
     crumbLabel: string;
-    intro: (id: ClientId, count: number, docs: string) => string;
+    /** claudeUrl：Claude Code 命令大全的地址（DeepSeek 页面里提到用 DeepSeek API 跑 Claude Code 时链接过去） */
+    intro: (id: ClientId, count: number, docs: string, claudeUrl: string) => string;
     promo: (id: ClientId, downloadUrl: string) => string;
     tocLabel: string;
     availableIn: string;
@@ -79,10 +80,10 @@ const zh: Strings = {
   langName: '中文',
   siteName: 'VibeSlash 指令助手',
   tagline: 'Claude Code、Codex 命令速查表：不用背命令，按一下就出来。',
-  nav: { claude: 'Claude Code 命令', codex: 'Codex 命令', download: '下载', language: '语言' },
-  footer: { releases: '下载', claudeAll: 'Claude Code 命令大全', codexAll: 'Codex 命令大全' },
+  nav: { claude: 'Claude Code 命令', codex: 'Codex 命令', deepseek: 'DeepSeek 命令', download: '下载', language: '语言' },
+  footer: { releases: '下载', claudeAll: 'Claude Code 命令大全', codexAll: 'Codex 命令大全', deepseekAll: 'DeepSeek 命令大全' },
   disclaimer:
-    'Claude 和 Claude Code 是 Anthropic, PBC 的商标；Codex 和 ChatGPT 是 OpenAI 的商标。VibeSlash 是独立的第三方开源项目，与 Anthropic、OpenAI 没有任何关联，也未获得其认可、赞助或授权。本站提及这些名称仅用于说明兼容性，相关商标归各自所有者所有。',
+    'Claude 和 Claude Code 是 Anthropic, PBC 的商标；Codex 和 ChatGPT 是 OpenAI 的商标；DeepSeek 是其权利人的商标。VibeSlash 是独立的第三方开源项目，与 Anthropic、OpenAI、DeepSeek 没有任何关联，也未获得其认可、赞助或授权。本站提及这些名称仅用于说明兼容性，相关商标归各自所有者所有。',
   home: {
     title: 'VibeSlash 指令助手 - Claude Code、Codex 命令速查表，不用背命令，按一下就出来',
     description:
@@ -105,7 +106,7 @@ const zh: Strings = {
       ['注重隐私', '不联网、不读对话记录，设置只保存在本机。完全免费，开源。'],
     ],
     desktopTitle: '桌面版：Claude、ChatGPT、终端里按 Alt + / 呼出',
-    desktopLead: '在 Claude 桌面 App 的 Code 标签页、ChatGPT 桌面 App 的 Codex 模式，或者终端里运行 claude / codex 时按下快捷键，面板出现在输入框旁边，并自动切到当前工具的命令。',
+    desktopLead: '在 Claude 桌面 App 的 Code 标签页、ChatGPT 桌面 App 的 Codex 模式，或者终端里运行 claude / codex 时按下快捷键，面板出现在输入框旁边，并自动切到当前工具的命令。在桌面 App 里也可以像浏览器扩展一样直接输入 /，或者点屏幕上的 / 悬浮按钮（可以拖动，也可以在设置里关掉）。',
     desktopClaudeAlt: 'VibeSlash 桌面版识别到 Claude 桌面 App，显示 Claude Code 命令，标出需带参数的命令',
     desktopClaudeCap: '识别到 Claude 桌面 App',
     desktopCodexAlt: 'VibeSlash 桌面版深色模式，识别到终端里的 Codex，中文搜索「审查」找到 /review',
@@ -130,10 +131,11 @@ const zh: Strings = {
     faqTitle: '常见问题',
     faq: [
       ['VibeSlash 是什么？', 'VibeSlash 指令助手是一个免费开源的 Claude Code、Codex 斜杠命令（/ 指令）中文速查与输入工具，有浏览器扩展和 Windows、macOS 桌面版。在输入框开头敲 / 就会弹出中文联想，或按快捷键打开完整的命令面板，每条命令都有中文说明、使用场景和示例。'],
-      ['支持哪些客户端？', '浏览器扩展支持 Chrome、Edge 上的 Claude Code 网页版（claude.ai/code）。桌面版支持 Claude 桌面 App（Code 标签页）、ChatGPT 桌面 App 的 Codex 模式，以及终端和编辑器里运行的 Claude Code CLI、Codex CLI，会自动识别当前是哪个工具。'],
+      ['支持哪些客户端？', '浏览器扩展支持 Chrome、Edge 上的 Claude Code 网页版（claude.ai/code）。桌面版支持 Claude 桌面 App（Code 标签页）、ChatGPT 桌面 App 的 Codex 模式、DeepSeek Harness 桌面 App，以及终端和编辑器里运行的 Claude Code CLI、Codex CLI，会自动识别当前是哪个工具。'],
       ['VibeSlash 有多大？', `很小：浏览器扩展 ${CLAUDE_SIZE}，Windows 安装包 ${WIN_SIZE}，macOS 安装包 ${MAC_SIZE}。桌面版不需要安装 .NET、Java 或 Node.js 等运行环境，Windows 版使用系统自带的 WebView2，macOS 版是原生应用。`],
-      ['桌面版怎么用？', '安装后在托盘（Windows）或菜单栏（macOS）运行。在 Claude、ChatGPT 或终端里按 Alt + /（macOS 是 ⌥ /），命令面板会出现在输入框旁边，输入中文或英文搜索，回车就插入到输入框，Ctrl/⌘ + 回车插入并发送。'],
+      ['桌面版怎么用？', '安装后在托盘（Windows）或菜单栏（macOS）运行。在 Claude、ChatGPT 或终端里按 Alt + /（macOS 是 ⌥ /），命令面板会出现在输入框旁边，输入中文或英文搜索，回车就插入到输入框，Ctrl/⌘ + 回车插入并发送。在桌面 App 的输入框开头直接输入 /，或者点屏幕上的 / 悬浮按钮，也能打开面板。'],
       ['Codex 的命令能在 ChatGPT 网页版里用吗？', '不能。按照 OpenAI 的文档，Codex 的斜杠命令只在 Codex CLI、IDE 扩展和 ChatGPT 桌面 App 的 Codex 模式里生效，ChatGPT 网页版有自己的指令菜单。所以在网页上 VibeSlash 只提供 Codex 命令的速查和复制。'],
+      ['支持 DeepSeek 吗？', '支持。DeepSeek 官方的智能体 DeepSeek Harness 有 /plan、/goal、/compact 等斜杠命令，VibeSlash 收录了它们的中文说明；桌面版能识别 DeepSeek Harness 桌面 App，浏览器扩展的弹出页也能速查。如果你是按 DeepSeek 的文档把 Claude Code 接到 DeepSeek 的 API 上使用，用的就是 Claude Code 的命令，看 Claude Code 命令大全即可。'],
       ['/compact 和 /clear 有什么区别？', '/compact 把之前的对话压缩成摘要，腾出上下文空间，会话继续；/clear 开始一段上下文为空的新对话。Claude Code 网页版不支持 /clear，可以在侧栏新建会话。'],
       ['为什么 /model、/effort 在网页版和桌面 App 里要带参数？', '网页版和桌面 App 不会弹出终端里的交互式选择器，需要直接带上参数，例如 /model opus、/effort high。VibeSlash 会把这类命令标为「需带参数」并给出示例。'],
       ['会收集我的数据吗？', '不会。VibeSlash 不发起任何网络请求，不读取对话记录，设置和使用记录只保存在本机。桌面版需要辅助功能（macOS）或模拟按键的能力，只用来找到输入框位置和插入你选中的命令。'],
@@ -143,16 +145,18 @@ const zh: Strings = {
   commands: {
     title: (name, count) => `${name} 命令大全：${count} 条斜杠命令中文说明与示例 - VibeSlash`,
     description: (name, examples, count, id) =>
-      `${name} 全部斜杠命令（/ 指令）中文速查：${examples} 等 ${count} 条命令的作用、使用场景、参数和示例，${id === 'claude-code' ? '并标出网页版和桌面 App 的差异' : '并标出 CLI、IDE、桌面 App 各自支持哪些命令'}。`,
+      `${name} 全部斜杠命令（/ 指令）中文速查：${examples} 等 ${count} 条命令的作用、使用场景、参数和示例，${({ 'claude-code': '并标出网页版和桌面 App 的差异', codex: '并标出 CLI、IDE、桌面 App 各自支持哪些命令', deepseek: '并说明在 Harness 的 Web 界面和桌面 App 里怎么用' } as const)[id]}。`,
     h1: (name) => `${name} 命令大全：全部斜杠命令中文说明`,
     home: '首页',
     crumbLabel: '面包屑',
-    intro: (id, count, docs) =>
-      id === 'claude-code'
-        ? `下面是 Claude Code 的 ${count} 条常用斜杠命令（/ 指令），按分类整理，每条附中文说明、使用场景和示例。依据官方文档 <a href="${docs}">Commands</a> 整理，并标出网页版（claude.ai/code）和 Claude 桌面 App 里的差异：这两个环境不会弹出终端里的交互式选择器，部分命令需要直接带参数。能否使用还取决于账号套餐、Claude Code 版本和组织策略，在会话里发送 <code>/help</code> 可以查看当前实际支持的命令。`
-        : `下面是 OpenAI Codex 的 ${count} 条斜杠命令（/ 指令），按分类整理，每条附中文说明、使用场景和示例。依据官方文档 <a href="${docs}">Developer commands</a> 整理。Codex 的命令在三个地方生效：终端里的 Codex CLI、IDE 扩展、ChatGPT 桌面 App 的 Codex 模式，各自支持的命令不完全相同，下面标出了只在部分环境可用的命令。ChatGPT 网页版有自己的指令菜单，这些命令在网页版不生效。`,
+    intro: (id, count, docs, claudeUrl) =>
+      ({
+        'claude-code': `下面是 Claude Code 的 ${count} 条常用斜杠命令（/ 指令），按分类整理，每条附中文说明、使用场景和示例。依据官方文档 <a href="${docs}">Commands</a> 整理，并标出网页版（claude.ai/code）和 Claude 桌面 App 里的差异：这两个环境不会弹出终端里的交互式选择器，部分命令需要直接带参数。能否使用还取决于账号套餐、Claude Code 版本和组织策略，在会话里发送 <code>/help</code> 可以查看当前实际支持的命令。`,
+        codex: `下面是 OpenAI Codex 的 ${count} 条斜杠命令（/ 指令），按分类整理，每条附中文说明、使用场景和示例。依据官方文档 <a href="${docs}">Developer commands</a> 整理。Codex 的命令在三个地方生效：终端里的 Codex CLI、IDE 扩展、ChatGPT 桌面 App 的 Codex 模式，各自支持的命令不完全相同，下面标出了只在部分环境可用的命令。ChatGPT 网页版有自己的指令菜单，这些命令在网页版不生效。`,
+        deepseek: `下面是 DeepSeek 官方智能体 DeepSeek Harness（dsh）的 ${count} 条内置斜杠命令，每条附中文说明、使用场景和示例，依据官方仓库的<a href="${docs}">命令文档</a>和源码整理。这些命令在 Harness 的 Web 界面（<code>npx @deepseek-ai/dsh web</code>，默认 http://127.0.0.1:3080）或桌面 App 的输入框里输入，命令行模式没有命令菜单。放在 <code>.dsh/skills</code> 里的技能也会以 <code>/技能名</code> 出现在菜单里。Harness 还是开发者预览版，命令可能随版本增减。如果你是把 Claude Code 接到 DeepSeek 的 API 上使用，请看 <a href="${claudeUrl}">Claude Code 命令大全</a>。`,
+      })[id],
     promo: (id, url) =>
-      `Claude Code、Codex 命令速查表：不用背命令，按一下就出来。<a href="${url}">下载 VibeSlash</a>，在 ${id === 'claude-code' ? 'Claude Code 网页版、Claude 桌面 App 和终端' : 'Codex CLI、ChatGPT 桌面 App 和编辑器'}里按一下快捷键就能搜索并插入这些命令。`,
+      `Claude Code、Codex 命令速查表：不用背命令，按一下就出来。<a href="${url}">下载 VibeSlash</a>，在 ${({ 'claude-code': 'Claude Code 网页版、Claude 桌面 App 和终端', codex: 'Codex CLI、ChatGPT 桌面 App 和编辑器', deepseek: 'DeepSeek Harness 桌面 App' } as const)[id]}里按一下快捷键就能搜索并插入这些命令。`,
     tocLabel: '分类',
     availableIn: '可用于：',
     needsArg: (s) => `${s}须直接带参数`,
@@ -175,10 +179,10 @@ const en: Strings = {
   langName: 'English',
   siteName: 'VibeSlash',
   tagline: 'Every Claude Code & Codex slash command, one keystroke away — no memorizing.',
-  nav: { claude: 'Claude Code commands', codex: 'Codex commands', download: 'Download', language: 'Language' },
-  footer: { releases: 'Download', claudeAll: 'All Claude Code commands', codexAll: 'All Codex commands' },
+  nav: { claude: 'Claude Code commands', codex: 'Codex commands', deepseek: 'DeepSeek commands', download: 'Download', language: 'Language' },
+  footer: { releases: 'Download', claudeAll: 'All Claude Code commands', codexAll: 'All Codex commands', deepseekAll: 'All DeepSeek commands' },
   disclaimer:
-    'Claude and Claude Code are trademarks of Anthropic, PBC. Codex and ChatGPT are trademarks of OpenAI. VibeSlash is an independent, unofficial open-source project and is not affiliated with, endorsed by, sponsored by or authorized by Anthropic or OpenAI. These names are used only to describe compatibility; all trademarks belong to their respective owners.',
+    'Claude and Claude Code are trademarks of Anthropic, PBC. Codex and ChatGPT are trademarks of OpenAI. DeepSeek is a trademark of its respective owner. VibeSlash is an independent, unofficial open-source project and is not affiliated with, endorsed by, sponsored by or authorized by Anthropic, OpenAI or DeepSeek. These names are used only to describe compatibility; all trademarks belong to their respective owners.',
   home: {
     title: 'VibeSlash — Claude Code & Codex slash command cheat sheet: no memorizing, one keystroke away',
     description:
@@ -201,7 +205,7 @@ const en: Strings = {
       ['Private by design', 'No network requests, no access to your conversations; settings stay on your machine. Free and open source.'],
     ],
     desktopTitle: 'Desktop apps: press Alt + / in Claude, ChatGPT or a terminal',
-    desktopLead: 'Press the hotkey in the Code tab of the Claude desktop app, in ChatGPT’s Codex mode, or in a terminal running claude / codex. The palette opens next to the input box and switches to that tool’s commands automatically.',
+    desktopLead: 'Press the hotkey in the Code tab of the Claude desktop app, in ChatGPT’s Codex mode, or in a terminal running claude / codex. The palette opens next to the input box and switches to that tool’s commands automatically. In the desktop apps you can also just type /, as in the browser extension, or click the floating / button (drag it anywhere, or turn it off in settings).',
     desktopClaudeAlt: 'VibeSlash desktop app detecting the Claude desktop app, listing Claude Code commands and marking those that need an argument',
     desktopClaudeCap: 'Detected the Claude desktop app',
     desktopCodexAlt: 'VibeSlash desktop app in dark mode detecting Codex in a terminal; searching for “审查” (review) finds /review',
@@ -226,10 +230,11 @@ const en: Strings = {
     faqTitle: 'FAQ',
     faq: [
       ['What is VibeSlash?', 'VibeSlash is a free, open-source cheat sheet and launcher for Claude Code and Codex slash commands, available as a browser extension and as Windows and macOS apps. Type / at the start of the input box to get suggestions, or press a hotkey to open the full palette; every command comes with a description, when to use it and an example.'],
-      ['Which tools does it support?', 'The browser extension supports Claude Code for the web (claude.ai/code) in Chrome and Edge. The desktop apps support the Claude desktop app (Code tab), ChatGPT’s Codex mode, and the Claude Code and Codex CLIs running in a terminal or editor — and detect which one you are using.'],
+      ['Which tools does it support?', 'The browser extension supports Claude Code for the web (claude.ai/code) in Chrome and Edge. The desktop apps support the Claude desktop app (Code tab), ChatGPT’s Codex mode, the DeepSeek Harness desktop app, and the Claude Code and Codex CLIs running in a terminal or editor — and detect which one you are using.'],
       ['How big is VibeSlash?', `Tiny: the extension is ${CLAUDE_SIZE}, the Windows installer ${WIN_SIZE} and the macOS installer ${MAC_SIZE}. The desktop apps need no .NET, Java or Node.js runtime — the Windows app uses the system’s built-in WebView2 and the macOS app is native.`],
-      ['How do I use the desktop app?', 'After installing, it runs in the tray (Windows) or the menu bar (macOS). Press Alt + / (⌥ / on macOS) in Claude, ChatGPT or a terminal; the palette opens next to the input box. Search, press Enter to insert, or Ctrl/⌘ + Enter to insert and send.'],
+      ['How do I use the desktop app?', 'After installing, it runs in the tray (Windows) or the menu bar (macOS). Press Alt + / (⌥ / on macOS) in Claude, ChatGPT or a terminal; the palette opens next to the input box. Search, press Enter to insert, or Ctrl/⌘ + Enter to insert and send. In the desktop apps you can also type / at the start of the input box, or click the floating / button.'],
       ['Do Codex commands work on ChatGPT on the web?', 'No. According to OpenAI’s docs, Codex slash commands only work in the Codex CLI, the IDE extension and the Codex mode of the ChatGPT desktop app; ChatGPT on the web has its own command menu. On the web, VibeSlash only offers a Codex reference you can copy from.'],
+      ['Does it support DeepSeek?', 'Yes. DeepSeek Harness, DeepSeek’s official agent, has slash commands such as /plan, /goal and /compact, and VibeSlash documents them. The desktop apps detect the DeepSeek Harness desktop app, and the browser popup has a quick reference. If you run Claude Code on DeepSeek’s API, as DeepSeek’s docs describe, you are using Claude Code’s commands — see the Claude Code command list.'],
       ['What’s the difference between /compact and /clear?', '/compact summarizes the conversation so far to free up context and keeps the session going; /clear starts a new conversation with empty context. Claude Code on the web doesn’t support /clear — start a new session from the sidebar instead.'],
       ['Why do /model and /effort need an argument on the web and in the desktop app?', 'The web and desktop apps don’t show the terminal’s interactive pickers, so you pass the value directly, e.g. /model opus or /effort high. VibeSlash labels these commands “requires an argument” and shows an example.'],
       ['Does it collect my data?', 'No. VibeSlash makes no network requests and never reads your conversations; settings and usage history stay on your machine. The desktop apps use Accessibility (macOS) or simulated keystrokes only to find the input box and insert the command you choose.'],
@@ -240,16 +245,18 @@ const en: Strings = {
   commands: {
     title: (name, count) => `All ${count} ${name} slash commands, explained with examples — VibeSlash`,
     description: (name, examples, count, id) =>
-      `Every ${name} slash command explained: what ${examples} and ${count - 6} more do, when to use them, their arguments and examples — ${id === 'claude-code' ? 'plus how they differ on the web and in the desktop app' : 'plus which ones work in the CLI, the IDE extension and the desktop app'}.`,
+      `Every ${name} slash command explained: what ${examples} and ${count - 6} more do, when to use them, their arguments and examples — ${({ 'claude-code': 'plus how they differ on the web and in the desktop app', codex: 'plus which ones work in the CLI, the IDE extension and the desktop app', deepseek: 'plus how to use them in the Harness web UI and desktop app' } as const)[id]}.`,
     h1: (name) => `${name} commands: every slash command explained`,
     home: 'Home',
     crumbLabel: 'Breadcrumb',
-    intro: (id, count, docs) =>
-      id === 'claude-code'
-        ? `Here are ${count} commonly used Claude Code slash commands, grouped by category, each with a description, when to use it and an example. Based on the official <a href="${docs}">Commands</a> documentation, with notes on how Claude Code on the web (claude.ai/code) and the Claude desktop app differ: neither shows the terminal’s interactive pickers, so some commands need an argument. Availability also depends on your plan, Claude Code version and organization policy — send <code>/help</code> in a session to see what is actually supported.`
-        : `Here are ${count} OpenAI Codex slash commands, grouped by category, each with a description, when to use it and an example. Based on the official <a href="${docs}">Developer commands</a> documentation. Codex commands work in three places — the Codex CLI in a terminal, the IDE extension and the Codex mode of the ChatGPT desktop app — and each supports a slightly different set; commands available only in some of them are marked. ChatGPT on the web has its own command menu, and these commands don’t work there.`,
+    intro: (id, count, docs, claudeUrl) =>
+      ({
+        'claude-code': `Here are ${count} commonly used Claude Code slash commands, grouped by category, each with a description, when to use it and an example. Based on the official <a href="${docs}">Commands</a> documentation, with notes on how Claude Code on the web (claude.ai/code) and the Claude desktop app differ: neither shows the terminal’s interactive pickers, so some commands need an argument. Availability also depends on your plan, Claude Code version and organization policy — send <code>/help</code> in a session to see what is actually supported.`,
+        codex: `Here are ${count} OpenAI Codex slash commands, grouped by category, each with a description, when to use it and an example. Based on the official <a href="${docs}">Developer commands</a> documentation. Codex commands work in three places — the Codex CLI in a terminal, the IDE extension and the Codex mode of the ChatGPT desktop app — and each supports a slightly different set; commands available only in some of them are marked. ChatGPT on the web has its own command menu, and these commands don’t work there.`,
+        deepseek: `Here are the ${count} built-in slash commands of DeepSeek Harness (dsh), DeepSeek’s official agent, each with a description, when to use it and an example, based on the <a href="${docs}">command docs</a> and source code in the official repository. Type them in the input box of the Harness web UI (<code>npx @deepseek-ai/dsh web</code>, http://127.0.0.1:3080 by default) or desktop app; the command-line modes have no command menu. Skills you put in <code>.dsh/skills</code> also appear in the menu as <code>/skill-name</code>. Harness is still a developer preview, so commands may change between versions. If you run Claude Code on DeepSeek’s API instead, see <a href="${claudeUrl}">Claude Code commands</a>.`,
+      })[id],
     promo: (id, url) =>
-      `No memorizing — one keystroke away. <a href="${url}">Download VibeSlash</a> and press a hotkey in ${id === 'claude-code' ? 'Claude Code on the web, the Claude desktop app or your terminal' : 'the Codex CLI, the ChatGPT desktop app or your editor'} to search and insert these commands.`,
+      `No memorizing — one keystroke away. <a href="${url}">Download VibeSlash</a> and press a hotkey in ${({ 'claude-code': 'Claude Code on the web, the Claude desktop app or your terminal', codex: 'the Codex CLI, the ChatGPT desktop app or your editor', deepseek: 'the DeepSeek Harness desktop app' } as const)[id]} to search and insert these commands.`,
     tocLabel: 'Categories',
     availableIn: 'Available in: ',
     needsArg: (s) => `${s}: requires an argument`,
@@ -272,10 +279,10 @@ const ja: Strings = {
   langName: '日本語',
   siteName: 'VibeSlash',
   tagline: 'Claude Code・Codex のコマンド早見表。覚えなくていい、ワンキーで出てくる。',
-  nav: { claude: 'Claude Code コマンド', codex: 'Codex コマンド', download: 'ダウンロード', language: '言語' },
-  footer: { releases: 'ダウンロード', claudeAll: 'Claude Code コマンド一覧', codexAll: 'Codex コマンド一覧' },
+  nav: { claude: 'Claude Code コマンド', codex: 'Codex コマンド', deepseek: 'DeepSeek コマンド', download: 'ダウンロード', language: '言語' },
+  footer: { releases: 'ダウンロード', claudeAll: 'Claude Code コマンド一覧', codexAll: 'Codex コマンド一覧', deepseekAll: 'DeepSeek コマンド一覧' },
   disclaimer:
-    'Claude および Claude Code は Anthropic, PBC の商標です。Codex および ChatGPT は OpenAI の商標です。VibeSlash は独立した非公式のオープンソースプロジェクトであり、Anthropic および OpenAI とは一切関係がなく、承認・後援・許諾も受けていません。これらの名称は互換性を説明するためにのみ使用しており、各商標はそれぞれの所有者に帰属します。',
+    'Claude および Claude Code は Anthropic, PBC の商標です。Codex および ChatGPT は OpenAI の商標です。DeepSeek はその権利者の商標です。VibeSlash は独立した非公式のオープンソースプロジェクトであり、Anthropic、OpenAI、DeepSeek とは一切関係がなく、承認・後援・許諾も受けていません。これらの名称は互換性を説明するためにのみ使用しており、各商標はそれぞれの所有者に帰属します。',
   home: {
     title: 'VibeSlash - Claude Code・Codex スラッシュコマンド早見表：覚えなくていい、ワンキーで出てくる',
     description:
@@ -298,7 +305,7 @@ const ja: Strings = {
       ['プライバシーに配慮', '通信なし、会話履歴も読みません。設定は手元の PC にだけ保存されます。完全無料・オープンソース。'],
     ],
     desktopTitle: 'デスクトップ版：Claude・ChatGPT・ターミナルで Alt + /',
-    desktopLead: 'Claude デスクトップアプリの Code タブ、ChatGPT デスクトップアプリの Codex モード、または claude / codex を実行中のターミナルでショートカットキーを押すと、入力欄の横にパレットが開き、そのツールのコマンドに自動で切り替わります。',
+    desktopLead: 'Claude デスクトップアプリの Code タブ、ChatGPT デスクトップアプリの Codex モード、または claude / codex を実行中のターミナルでショートカットキーを押すと、入力欄の横にパレットが開き、そのツールのコマンドに自動で切り替わります。デスクトップアプリでは、ブラウザ拡張機能と同じように / を入力するか、画面上の / フローティングボタン（ドラッグで移動、設定でオフにできます）をクリックしても開けます。',
     desktopClaudeAlt: 'VibeSlash デスクトップ版が Claude デスクトップアプリを判別し、Claude Code のコマンドを表示して引数が必要なものにラベルを付けている',
     desktopClaudeCap: 'Claude デスクトップアプリを判別',
     desktopCodexAlt: 'VibeSlash デスクトップ版のダークモード。ターミナルの Codex を判別し、「审查」（レビュー）で /review が見つかる',
@@ -323,10 +330,11 @@ const ja: Strings = {
     faqTitle: 'よくある質問',
     faq: [
       ['VibeSlash とは？', 'VibeSlash は Claude Code と Codex のスラッシュコマンドを調べて入力するための、無料・オープンソースのツールです。ブラウザ拡張機能と Windows・macOS 版があります。入力欄の先頭で / を打つと候補が表示され、ショートカットキーでコマンドパレットを開くこともできます。どのコマンドにも説明・使いどころ・例が付いています。'],
-      ['どのツールに対応していますか？', 'ブラウザ拡張機能は Chrome・Edge 上の Claude Code Web 版（claude.ai/code）に対応しています。デスクトップ版は Claude デスクトップアプリ（Code タブ）、ChatGPT デスクトップアプリの Codex モード、ターミナルやエディタで動く Claude Code CLI と Codex CLI に対応し、どのツールを使っているかを自動で判別します。'],
+      ['どのツールに対応していますか？', 'ブラウザ拡張機能は Chrome・Edge 上の Claude Code Web 版（claude.ai/code）に対応しています。デスクトップ版は Claude デスクトップアプリ（Code タブ）、ChatGPT デスクトップアプリの Codex モード、DeepSeek Harness デスクトップアプリ、ターミナルやエディタで動く Claude Code CLI と Codex CLI に対応し、どのツールを使っているかを自動で判別します。'],
       ['サイズはどれくらいですか？', `とても小さいです。拡張機能は ${CLAUDE_SIZE}、Windows 版インストーラーは ${WIN_SIZE}、macOS 版は ${MAC_SIZE}。デスクトップ版は .NET・Java・Node.js などのランタイムが不要で、Windows 版はシステム標準の WebView2 を使い、macOS 版はネイティブアプリです。`],
-      ['デスクトップ版の使い方は？', 'インストールすると、タスクトレイ（Windows）またはメニューバー（macOS）に常駐します。Claude、ChatGPT、ターミナルで Alt + /（macOS は ⌥ /）を押すと入力欄の横にパレットが開きます。検索して Enter で入力、Ctrl/⌘ + Enter で入力して送信します。'],
+      ['デスクトップ版の使い方は？', 'インストールすると、タスクトレイ（Windows）またはメニューバー（macOS）に常駐します。Claude、ChatGPT、ターミナルで Alt + /（macOS は ⌥ /）を押すと入力欄の横にパレットが開きます。検索して Enter で入力、Ctrl/⌘ + Enter で入力して送信します。デスクトップアプリの入力欄の先頭で / を打つか、画面上の / フローティングボタンをクリックしても開けます。'],
       ['Codex のコマンドは ChatGPT の Web 版で使えますか？', '使えません。OpenAI のドキュメントによると、Codex のスラッシュコマンドが使えるのは Codex CLI、IDE 拡張機能、ChatGPT デスクトップアプリの Codex モードだけで、ChatGPT の Web 版には独自のコマンドメニューがあります。そのため Web 上では、VibeSlash は Codex コマンドの確認とコピーのみに対応しています。'],
+      ['DeepSeek に対応していますか？', '対応しています。DeepSeek の公式エージェント DeepSeek Harness には /plan、/goal、/compact などのスラッシュコマンドがあり、VibeSlash はその説明を収録しています。デスクトップ版は DeepSeek Harness デスクトップアプリを判別し、ブラウザ拡張機能のポップアップでも確認できます。DeepSeek のドキュメントに沿って Claude Code を DeepSeek の API で使っている場合は Claude Code のコマンドを使うことになるので、Claude Code コマンド一覧をご覧ください。'],
       ['/compact と /clear の違いは？', '/compact はこれまでの会話を要約してコンテキストを空け、セッションを続けます。/clear はコンテキストが空の新しい会話を始めます。Claude Code の Web 版は /clear に対応していないため、サイドバーから新しいセッションを作成してください。'],
       ['/model や /effort が Web 版やデスクトップアプリで引数を必要とするのはなぜ？', 'Web 版とデスクトップアプリではターミナルの対話式の選択画面が表示されないため、/model opus や /effort high のように値を直接指定する必要があります。VibeSlash ではこうしたコマンドに「引数が必要」と表示し、例も示しています。'],
       ['データは収集されますか？', 'いいえ。VibeSlash は通信を一切行わず、会話履歴も読みません。設定と利用履歴は手元の PC にだけ保存されます。デスクトップ版がアクセシビリティ（macOS）やキー入力のシミュレーションを使うのは、入力欄の位置を調べて選んだコマンドを入力するときだけです。'],
@@ -337,16 +345,18 @@ const ja: Strings = {
   commands: {
     title: (name, count) => `${name} コマンド一覧：全 ${count} 個のスラッシュコマンドを解説 - VibeSlash`,
     description: (name, examples, count, id) =>
-      `${name} のスラッシュコマンドを全部解説。${examples} など ${count} 個のコマンドの働き・使いどころ・引数・例をまとめ、${id === 'claude-code' ? 'Web 版とデスクトップアプリでの違いも記載しています' : 'CLI・IDE・デスクトップアプリのどこで使えるかも記載しています'}。`,
+      `${name} のスラッシュコマンドを全部解説。${examples} など ${count} 個のコマンドの働き・使いどころ・引数・例をまとめ、${({ 'claude-code': 'Web 版とデスクトップアプリでの違いも記載しています', codex: 'CLI・IDE・デスクトップアプリのどこで使えるかも記載しています', deepseek: 'Harness の Web UI とデスクトップアプリでの使い方も記載しています' } as const)[id]}。`,
     h1: (name) => `${name} コマンド一覧：すべてのスラッシュコマンドを解説`,
     home: 'ホーム',
     crumbLabel: 'パンくずリスト',
-    intro: (id, count, docs) =>
-      id === 'claude-code'
-        ? `Claude Code でよく使うスラッシュコマンド ${count} 個をカテゴリ別にまとめ、それぞれに説明・使いどころ・例を付けています。公式ドキュメント <a href="${docs}">Commands</a> をもとに、Web 版（claude.ai/code）と Claude デスクトップアプリでの違いも記載しています。どちらもターミナルの対話式の選択画面を表示しないため、一部のコマンドは引数を直接指定する必要があります。実際に使えるかどうかはプラン、Claude Code のバージョン、組織のポリシーにもよります。セッションで <code>/help</code> を送ると、いま使えるコマンドを確認できます。`
-        : `OpenAI Codex のスラッシュコマンド ${count} 個をカテゴリ別にまとめ、それぞれに説明・使いどころ・例を付けています。公式ドキュメント <a href="${docs}">Developer commands</a> にもとづいています。Codex のコマンドが使えるのは、ターミナルの Codex CLI、IDE 拡張機能、ChatGPT デスクトップアプリの Codex モードの 3 か所で、それぞれ対応するコマンドが少しずつ異なります。一部でしか使えないコマンドには印を付けています。ChatGPT の Web 版には独自のコマンドメニューがあり、これらのコマンドは使えません。`,
+    intro: (id, count, docs, claudeUrl) =>
+      ({
+        'claude-code': `Claude Code でよく使うスラッシュコマンド ${count} 個をカテゴリ別にまとめ、それぞれに説明・使いどころ・例を付けています。公式ドキュメント <a href="${docs}">Commands</a> をもとに、Web 版（claude.ai/code）と Claude デスクトップアプリでの違いも記載しています。どちらもターミナルの対話式の選択画面を表示しないため、一部のコマンドは引数を直接指定する必要があります。実際に使えるかどうかはプラン、Claude Code のバージョン、組織のポリシーにもよります。セッションで <code>/help</code> を送ると、いま使えるコマンドを確認できます。`,
+        codex: `OpenAI Codex のスラッシュコマンド ${count} 個をカテゴリ別にまとめ、それぞれに説明・使いどころ・例を付けています。公式ドキュメント <a href="${docs}">Developer commands</a> にもとづいています。Codex のコマンドが使えるのは、ターミナルの Codex CLI、IDE 拡張機能、ChatGPT デスクトップアプリの Codex モードの 3 か所で、それぞれ対応するコマンドが少しずつ異なります。一部でしか使えないコマンドには印を付けています。ChatGPT の Web 版には独自のコマンドメニューがあり、これらのコマンドは使えません。`,
+        deepseek: `DeepSeek の公式エージェント DeepSeek Harness（dsh）の組み込みスラッシュコマンド ${count} 個に、説明・使いどころ・例を付けています。公式リポジトリの<a href="${docs}">コマンドのドキュメント</a>とソースコードにもとづいています。コマンドは Harness の Web UI（<code>npx @deepseek-ai/dsh web</code>、既定は http://127.0.0.1:3080）またはデスクトップアプリの入力欄で入力します。コマンドラインモードにはコマンドメニューがありません。<code>.dsh/skills</code> に置いたスキルも <code>/スキル名</code> としてメニューに表示されます。Harness はまだ開発者プレビューのため、コマンドはバージョンによって変わることがあります。Claude Code を DeepSeek の API で使っている場合は <a href="${claudeUrl}">Claude Code コマンド一覧</a>をご覧ください。`,
+      })[id],
     promo: (id, url) =>
-      `覚えなくていい、ワンキーで出てくる。<a href="${url}">VibeSlash をダウンロード</a>すれば、${id === 'claude-code' ? 'Claude Code の Web 版、Claude デスクトップアプリ、ターミナル' : 'Codex CLI、ChatGPT デスクトップアプリ、エディタ'}でショートカットキーを押すだけで、これらのコマンドを検索して入力できます。`,
+      `覚えなくていい、ワンキーで出てくる。<a href="${url}">VibeSlash をダウンロード</a>すれば、${({ 'claude-code': 'Claude Code の Web 版、Claude デスクトップアプリ、ターミナル', codex: 'Codex CLI、ChatGPT デスクトップアプリ、エディタ', deepseek: 'DeepSeek Harness デスクトップアプリ' } as const)[id]}でショートカットキーを押すだけで、これらのコマンドを検索して入力できます。`,
     tocLabel: 'カテゴリ',
     availableIn: '対応環境：',
     needsArg: (s) => `${s}では引数が必要`,
@@ -369,10 +379,10 @@ const ko: Strings = {
   langName: '한국어',
   siteName: 'VibeSlash',
   tagline: 'Claude Code·Codex 명령어 치트시트. 외울 필요 없이 한 번 누르면 바로 나옵니다.',
-  nav: { claude: 'Claude Code 명령어', codex: 'Codex 명령어', download: '다운로드', language: '언어' },
-  footer: { releases: '다운로드', claudeAll: 'Claude Code 명령어 모음', codexAll: 'Codex 명령어 모음' },
+  nav: { claude: 'Claude Code 명령어', codex: 'Codex 명령어', deepseek: 'DeepSeek 명령어', download: '다운로드', language: '언어' },
+  footer: { releases: '다운로드', claudeAll: 'Claude Code 명령어 모음', codexAll: 'Codex 명령어 모음', deepseekAll: 'DeepSeek 명령어 모음' },
   disclaimer:
-    'Claude와 Claude Code는 Anthropic, PBC의 상표이며, Codex와 ChatGPT는 OpenAI의 상표입니다. VibeSlash는 독립적인 비공식 오픈소스 프로젝트로, Anthropic 및 OpenAI와 아무런 관련이 없으며 승인·후원·허가를 받지 않았습니다. 이 이름들은 호환성을 설명하기 위해서만 사용하며, 모든 상표는 각 소유자에게 있습니다.',
+    'Claude와 Claude Code는 Anthropic, PBC의 상표이며, Codex와 ChatGPT는 OpenAI의 상표이고, DeepSeek는 해당 권리자의 상표입니다. VibeSlash는 독립적인 비공식 오픈소스 프로젝트로, Anthropic, OpenAI, DeepSeek와 아무런 관련이 없으며 승인·후원·허가를 받지 않았습니다. 이 이름들은 호환성을 설명하기 위해서만 사용하며, 모든 상표는 각 소유자에게 있습니다.',
   home: {
     title: 'VibeSlash - Claude Code·Codex 슬래시 명령어 치트시트: 외울 필요 없이 한 번 누르면 바로',
     description:
@@ -395,7 +405,7 @@ const ko: Strings = {
       ['개인정보 보호', '네트워크 요청이 없고 대화 기록을 읽지 않으며, 설정은 내 컴퓨터에만 저장됩니다. 완전 무료, 오픈소스.'],
     ],
     desktopTitle: '데스크톱 앱: Claude·ChatGPT·터미널에서 Alt + /',
-    desktopLead: 'Claude 데스크톱 앱의 Code 탭, ChatGPT 데스크톱 앱의 Codex 모드, 또는 claude / codex 를 실행 중인 터미널에서 단축키를 누르면 입력창 옆에 팔레트가 열리고 해당 도구의 명령어로 자동 전환됩니다.',
+    desktopLead: 'Claude 데스크톱 앱의 Code 탭, ChatGPT 데스크톱 앱의 Codex 모드, 또는 claude / codex 를 실행 중인 터미널에서 단축키를 누르면 입력창 옆에 팔레트가 열리고 해당 도구의 명령어로 자동 전환됩니다. 데스크톱 앱에서는 브라우저 확장 프로그램처럼 /를 입력하거나, 화면의 / 플로팅 버튼(드래그로 이동, 설정에서 끌 수 있음)을 눌러도 열립니다.',
     desktopClaudeAlt: 'VibeSlash 데스크톱 앱이 Claude 데스크톱 앱을 인식해 Claude Code 명령어를 보여 주고, 인수가 필요한 명령어를 표시함',
     desktopClaudeCap: 'Claude 데스크톱 앱 인식',
     desktopCodexAlt: 'VibeSlash 데스크톱 앱 다크 모드. 터미널의 Codex를 인식하고 “审查”(리뷰)로 검색해 /review 를 찾음',
@@ -420,10 +430,11 @@ const ko: Strings = {
     faqTitle: '자주 묻는 질문',
     faq: [
       ['VibeSlash는 무엇인가요?', 'VibeSlash는 Claude Code와 Codex의 슬래시 명령어를 찾아보고 입력하기 위한 무료 오픈소스 도구로, 브라우저 확장 프로그램과 Windows·macOS 앱이 있습니다. 입력창 맨 앞에서 / 를 입력하면 추천이 뜨고, 단축키로 명령어 팔레트를 열 수도 있습니다. 모든 명령어에 설명·사용 시점·예시가 있습니다.'],
-      ['어떤 도구를 지원하나요?', '브라우저 확장 프로그램은 Chrome·Edge의 Claude Code 웹 버전(claude.ai/code)을 지원합니다. 데스크톱 앱은 Claude 데스크톱 앱(Code 탭), ChatGPT 데스크톱 앱의 Codex 모드, 터미널과 편집기에서 실행되는 Claude Code CLI와 Codex CLI를 지원하며, 어떤 도구를 쓰고 있는지 자동으로 인식합니다.'],
+      ['어떤 도구를 지원하나요?', '브라우저 확장 프로그램은 Chrome·Edge의 Claude Code 웹 버전(claude.ai/code)을 지원합니다. 데스크톱 앱은 Claude 데스크톱 앱(Code 탭), ChatGPT 데스크톱 앱의 Codex 모드, DeepSeek Harness 데스크톱 앱, 터미널과 편집기에서 실행되는 Claude Code CLI와 Codex CLI를 지원하며, 어떤 도구를 쓰고 있는지 자동으로 인식합니다.'],
       ['용량은 얼마나 되나요?', `아주 작습니다. 확장 프로그램 ${CLAUDE_SIZE}, Windows 설치 파일 ${WIN_SIZE}, macOS 설치 파일 ${MAC_SIZE}입니다. 데스크톱 앱은 .NET, Java, Node.js 같은 런타임이 필요 없으며, Windows 앱은 시스템에 내장된 WebView2를 쓰고 macOS 앱은 네이티브 앱입니다.`],
-      ['데스크톱 앱은 어떻게 쓰나요?', '설치하면 트레이(Windows) 또는 메뉴 막대(macOS)에 상주합니다. Claude, ChatGPT, 터미널에서 Alt + /(macOS는 ⌥ /)를 누르면 입력창 옆에 팔레트가 열립니다. 검색한 뒤 Enter로 입력하고, Ctrl/⌘ + Enter로 입력과 동시에 전송합니다.'],
+      ['데스크톱 앱은 어떻게 쓰나요?', '설치하면 트레이(Windows) 또는 메뉴 막대(macOS)에 상주합니다. Claude, ChatGPT, 터미널에서 Alt + /(macOS는 ⌥ /)를 누르면 입력창 옆에 팔레트가 열립니다. 검색한 뒤 Enter로 입력하고, Ctrl/⌘ + Enter로 입력과 동시에 전송합니다. 데스크톱 앱 입력창 맨 앞에서 /를 입력하거나 화면의 / 플로팅 버튼을 눌러도 열립니다.'],
       ['Codex 명령어를 ChatGPT 웹 버전에서도 쓸 수 있나요?', '아니요. OpenAI 문서에 따르면 Codex 슬래시 명령어는 Codex CLI, IDE 확장 프로그램, ChatGPT 데스크톱 앱의 Codex 모드에서만 동작하고, ChatGPT 웹 버전에는 자체 명령어 메뉴가 있습니다. 그래서 웹에서는 VibeSlash가 Codex 명령어 조회와 복사만 지원합니다.'],
+      ['DeepSeek도 지원하나요?', '지원합니다. DeepSeek의 공식 에이전트 DeepSeek Harness에는 /plan, /goal, /compact 등의 슬래시 명령어가 있고, VibeSlash에 그 설명을 담았습니다. 데스크톱 앱은 DeepSeek Harness 데스크톱 앱을 인식하고, 브라우저 확장 프로그램의 팝업에서도 확인할 수 있습니다. DeepSeek 문서대로 Claude Code를 DeepSeek API에 연결해 쓰고 있다면 Claude Code 명령어를 쓰는 것이므로 Claude Code 명령어 모음을 보세요.'],
       ['/compact와 /clear는 어떻게 다른가요?', '/compact는 지금까지의 대화를 요약해 컨텍스트 공간을 확보하고 세션을 이어 갑니다. /clear는 컨텍스트가 비어 있는 새 대화를 시작합니다. Claude Code 웹 버전은 /clear를 지원하지 않으므로 사이드바에서 새 세션을 만드세요.'],
       ['/model, /effort가 웹 버전과 데스크톱 앱에서 인수를 필요로 하는 이유는?', '웹 버전과 데스크톱 앱에서는 터미널의 대화형 선택 화면이 뜨지 않으므로 /model opus, /effort high처럼 값을 직접 넣어야 합니다. VibeSlash는 이런 명령어에 “인수 필요”를 표시하고 예시를 보여 줍니다.'],
       ['데이터를 수집하나요?', '아니요. VibeSlash는 네트워크 요청을 전혀 하지 않고 대화 기록도 읽지 않으며, 설정과 사용 기록은 내 컴퓨터에만 저장됩니다. 데스크톱 앱이 손쉬운 사용(macOS)이나 키 입력 시뮬레이션을 쓰는 것은 입력창 위치를 찾고 고른 명령어를 입력할 때뿐입니다.'],
@@ -434,16 +445,18 @@ const ko: Strings = {
   commands: {
     title: (name, count) => `${name} 명령어 모음: 슬래시 명령어 ${count}개 설명과 예시 - VibeSlash`,
     description: (name, examples, count, id) =>
-      `${name}의 모든 슬래시 명령어 설명: ${examples} 등 ${count}개 명령어의 기능·사용 시점·인수·예시를 정리하고, ${id === 'claude-code' ? '웹 버전과 데스크톱 앱의 차이도 표시했습니다' : 'CLI·IDE·데스크톱 앱 중 어디서 되는지도 표시했습니다'}.`,
+      `${name}의 모든 슬래시 명령어 설명: ${examples} 등 ${count}개 명령어의 기능·사용 시점·인수·예시를 정리하고, ${({ 'claude-code': '웹 버전과 데스크톱 앱의 차이도 표시했습니다', codex: 'CLI·IDE·데스크톱 앱 중 어디서 되는지도 표시했습니다', deepseek: 'Harness 웹 UI와 데스크톱 앱에서 쓰는 방법도 정리했습니다' } as const)[id]}.`,
     h1: (name) => `${name} 명령어 모음: 모든 슬래시 명령어 설명`,
     home: '홈',
     crumbLabel: '탐색 경로',
-    intro: (id, count, docs) =>
-      id === 'claude-code'
-        ? `Claude Code에서 자주 쓰는 슬래시 명령어 ${count}개를 카테고리별로 정리하고, 명령어마다 설명·사용 시점·예시를 붙였습니다. 공식 문서 <a href="${docs}">Commands</a>를 바탕으로 했으며, 웹 버전(claude.ai/code)과 Claude 데스크톱 앱에서의 차이도 표시했습니다. 두 환경 모두 터미널의 대화형 선택 화면을 띄우지 않으므로 일부 명령어는 인수를 직접 넣어야 합니다. 실제 사용 가능 여부는 요금제, Claude Code 버전, 조직 정책에 따라서도 달라집니다. 세션에서 <code>/help</code>를 보내면 지금 쓸 수 있는 명령어를 확인할 수 있습니다.`
-        : `OpenAI Codex의 슬래시 명령어 ${count}개를 카테고리별로 정리하고, 명령어마다 설명·사용 시점·예시를 붙였습니다. 공식 문서 <a href="${docs}">Developer commands</a>를 바탕으로 했습니다. Codex 명령어는 터미널의 Codex CLI, IDE 확장 프로그램, ChatGPT 데스크톱 앱의 Codex 모드 세 곳에서 동작하며, 각각 지원하는 명령어가 조금씩 다릅니다. 일부에서만 되는 명령어는 따로 표시했습니다. ChatGPT 웹 버전에는 자체 명령어 메뉴가 있어 이 명령어들이 동작하지 않습니다.`,
+    intro: (id, count, docs, claudeUrl) =>
+      ({
+        'claude-code': `Claude Code에서 자주 쓰는 슬래시 명령어 ${count}개를 카테고리별로 정리하고, 명령어마다 설명·사용 시점·예시를 붙였습니다. 공식 문서 <a href="${docs}">Commands</a>를 바탕으로 했으며, 웹 버전(claude.ai/code)과 Claude 데스크톱 앱에서의 차이도 표시했습니다. 두 환경 모두 터미널의 대화형 선택 화면을 띄우지 않으므로 일부 명령어는 인수를 직접 넣어야 합니다. 실제 사용 가능 여부는 요금제, Claude Code 버전, 조직 정책에 따라서도 달라집니다. 세션에서 <code>/help</code>를 보내면 지금 쓸 수 있는 명령어를 확인할 수 있습니다.`,
+        codex: `OpenAI Codex의 슬래시 명령어 ${count}개를 카테고리별로 정리하고, 명령어마다 설명·사용 시점·예시를 붙였습니다. 공식 문서 <a href="${docs}">Developer commands</a>를 바탕으로 했습니다. Codex 명령어는 터미널의 Codex CLI, IDE 확장 프로그램, ChatGPT 데스크톱 앱의 Codex 모드 세 곳에서 동작하며, 각각 지원하는 명령어가 조금씩 다릅니다. 일부에서만 되는 명령어는 따로 표시했습니다. ChatGPT 웹 버전에는 자체 명령어 메뉴가 있어 이 명령어들이 동작하지 않습니다.`,
+        deepseek: `DeepSeek의 공식 에이전트 DeepSeek Harness(dsh)의 내장 슬래시 명령어 ${count}개에 설명·사용 시점·예시를 붙였습니다. 공식 저장소의 <a href="${docs}">명령어 문서</a>와 소스 코드를 바탕으로 했습니다. 명령어는 Harness 웹 UI(<code>npx @deepseek-ai/dsh web</code>, 기본 http://127.0.0.1:3080)나 데스크톱 앱의 입력창에서 입력하며, 명령줄 모드에는 명령어 메뉴가 없습니다. <code>.dsh/skills</code>에 둔 스킬도 <code>/스킬이름</code>으로 메뉴에 나타납니다. Harness는 아직 개발자 프리뷰라서 버전에 따라 명령어가 바뀔 수 있습니다. Claude Code를 DeepSeek API로 쓰고 있다면 <a href="${claudeUrl}">Claude Code 명령어 모음</a>을 보세요.`,
+      })[id],
     promo: (id, url) =>
-      `외울 필요 없이 한 번 누르면 바로. <a href="${url}">VibeSlash를 내려받으면</a> ${id === 'claude-code' ? 'Claude Code 웹 버전, Claude 데스크톱 앱, 터미널' : 'Codex CLI, ChatGPT 데스크톱 앱, 편집기'}에서 단축키 한 번으로 이 명령어들을 검색하고 입력할 수 있습니다.`,
+      `외울 필요 없이 한 번 누르면 바로. <a href="${url}">VibeSlash를 내려받으면</a> ${({ 'claude-code': 'Claude Code 웹 버전, Claude 데스크톱 앱, 터미널', codex: 'Codex CLI, ChatGPT 데스크톱 앱, 편집기', deepseek: 'DeepSeek Harness 데스크톱 앱' } as const)[id]}에서 단축키 한 번으로 이 명령어들을 검색하고 입력할 수 있습니다.`,
     tocLabel: '카테고리',
     availableIn: '사용 가능: ',
     needsArg: (s) => `${s}에서는 인수 필요`,

@@ -33,13 +33,14 @@
 
       <section>
         <h2>自定义指令</h2>
-        <p class="help">把仓库里的技能（Claude Code 的 <code>.claude/skills</code>、<code>.claude/commands</code>，Codex 的自定义提示词 <code>/prompts:名称</code>）或 MCP 提示词加进来，联想、面板和弹出页里会一起显示；与内置指令同名时覆盖内置说明。</p>
+        <p class="help">把仓库里的技能（Claude Code 的 <code>.claude/skills</code>、<code>.claude/commands</code>，Codex 的自定义提示词 <code>/prompts:名称</code>，DeepSeek Harness 的 <code>.dsh/skills</code>）或 MCP 提示词加进来，联想、面板和弹出页里会一起显示；与内置指令同名时覆盖内置说明。</p>
         <form id="customForm" class="form" novalidate>
           <label class="field">
             <span>适用工具</span>
             <select name="client">
               <option value="claude-code">Claude Code</option>
               <option value="codex">Codex</option>
+              <option value="deepseek">DeepSeek</option>
             </select>
           </label>
           <label class="field">
@@ -85,7 +86,7 @@
         <div id="builtinList"></div>
       </section>
       <p id="saved" class="saved" role="status" hidden>已保存</p>
-      <p class="legal">Claude 和 Claude Code 是 Anthropic, PBC 的商标；Codex 和 ChatGPT 是 OpenAI 的商标。VibeSlash 是独立的第三方开源工具，与 Anthropic、OpenAI 没有关联，也未获得其认可或赞助；提及相关名称仅为说明兼容性。</p>
+      <p class="legal">Claude 和 Claude Code 是 Anthropic, PBC 的商标；Codex 和 ChatGPT 是 OpenAI 的商标；DeepSeek 是其权利人的商标。VibeSlash 是独立的第三方开源工具，与 Anthropic、OpenAI、DeepSeek 没有关联，也未获得其认可或赞助；提及相关名称仅为说明兼容性。</p>
     </main>
     <script src="../core.js"></script>
     <script src="options.js"></script>

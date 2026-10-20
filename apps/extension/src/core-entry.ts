@@ -1,5 +1,5 @@
 // 扩展的公共逻辑：在 @vibeslash/core 之上加浏览器存储，挂到 globalThis.CSH 给内容脚本、弹出页和设置页使用。
-// 构建时打包成 dist/core.js（IIFE）。内容脚本只处理 Claude Code 网页版，弹出页可以切换到 Codex 速查。
+// 构建时打包成 dist/core.js（IIFE）。内容脚本只处理 Claude Code 网页版，弹出页可以切换到 Codex、DeepSeek 速查。
 import {
   CLIENTS,
   SURFACE_LABELS,
@@ -35,8 +35,8 @@ const DEFAULT_SETTINGS = {
 };
 type Settings = typeof DEFAULT_SETTINGS;
 
-/** 扩展里每个工具展示哪个环境的指令：Claude Code 看网页版；Codex 没有网页版，展示全部环境 */
-const SURFACE: Record<ClientId, Surface | null> = { 'claude-code': 'web', codex: null };
+/** 扩展里每个工具展示哪个环境的指令：Claude Code 看网页版；Codex 没有网页版、DeepSeek 两个环境指令相同，展示全部环境 */
+const SURFACE: Record<ClientId, Surface | null> = { 'claude-code': 'web', codex: null, deepseek: null };
 
 /** 扩展里用的指令：在核心数据上补出旧字段（web、webNote）和可用环境 */
 export interface ExtCommand extends Command {
