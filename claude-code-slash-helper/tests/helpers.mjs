@@ -40,13 +40,14 @@ function prepareExtension() {
   return dir;
 }
 
-export async function launchBrowser() {
+export async function launchBrowser(options = {}) {
   const extensionDir = prepareExtension();
   const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'csh-profile-'));
   const context = await chromium.launchPersistentContext(userDataDir, {
     channel: 'chromium',
     headless: true,
     viewport: { width: 1280, height: 800 },
+    ...options,
     args: [`--disable-extensions-except=${extensionDir}`, `--load-extension=${extensionDir}`],
   });
   let [worker] = context.serviceWorkers();

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>截图用的演示页</title>
+    <!-- 只用于 scripts/screenshots.mjs 生成 README 截图：一个中性的对话页面，?theme=dark 切换深色 -->
+    <style>
+      :root { --bg: #faf9f5; --fg: #1f1e1c; --muted: #6d6b65; --bubble: #f0eee6; --border: #e3e0d8; --field: #fff; }
+      html.dark { --bg: #262624; --fg: #f3f1ea; --muted: #a8a49a; --bubble: #33322e; --border: #45433e; --field: #30302e; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        height: 100vh;
+        background: var(--bg);
+        color: var(--fg);
+        font: 15px/1.6 system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      }
+      main { max-width: 760px; margin: 0 auto; padding: 32px 24px 180px; }
+      .msg { margin: 0 0 18px; }
+      .msg.user { margin-left: auto; width: fit-content; max-width: 70%; padding: 10px 14px; border-radius: 14px; background: var(--bubble); }
+      .msg.bot { color: var(--fg); }
+      .msg code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; padding: 1px 5px; border-radius: 4px; background: var(--bubble); }
+      .composer { position: fixed; left: 50%; bottom: 24px; width: min(760px, calc(100% - 48px)); transform: translateX(-50%); }
+      textarea {
+        display: block;
+        width: 100%;
+        min-height: 96px;
+        padding: 14px 16px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: var(--field);
+        color: var(--fg);
+        font: inherit;
+        resize: none;
+        outline: none;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+      }
+    </style>
+    <script>
+      if (new URLSearchParams(location.search).get('theme') === 'dark') document.documentElement.classList.add('dark');
+    </script>
+  </head>
+  <body>
+    <main>
+      <p class="msg user">把登录页的表单校验改成实时提示，并补上单元测试</p>
+      <p class="msg bot">已修改 <code>LoginForm.tsx</code>：输入时实时校验邮箱和密码格式，错误信息显示在字段下方。新增 6 个测试用例，全部通过。</p>
+      <p class="msg user">顺便看看还有没有别的问题</p>
+      <p class="msg bot">我检查了相关改动，没有发现新的问题。可以继续下一项任务。</p>
+    </main>
+    <form class="composer" onsubmit="return false">
+      <textarea id="prompt" placeholder="回复…" aria-label="消息"></textarea>
+    </form>
+  </body>
+</html>

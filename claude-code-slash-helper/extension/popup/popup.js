@@ -26,7 +26,10 @@
     }
   }
   $('open').disabled = !codePage;
-  if (!codePage) showStatus('当前标签页不是 Claude Code 网页版（claude.ai/code），点击指令会复制到剪贴板。');
+  if (!codePage) {
+    showStatus('当前标签页不是 Claude Code 网页版，点击指令会复制到剪贴板。');
+    $('enter-hint').textContent = '复制';
+  }
 
   let items = [];
   let index = 0;
@@ -43,30 +46,52 @@
     return node;
   }
 
+  function itemNode(cmd, i) {
+    const item = el('li', i === index ? 'item active' : 'item');
+    item.setAttribute('role', 'option');
+    item.setAttribute('aria-selected', String(i === index));
+    item.dataset.index = String(i);
+    item.title = codePage ? '点击插入到输入框' : '点击复制';
+    const line = el('div', 'line');
+    line.append(el('span', 'name mono', `/${cmd.name}`));
+    if (cmd.args) line.append(el('span', 'args mono', cmd.args));
+    const badges = el('span', 'badges');
+    for (const [text, tone] of C.badges(cmd)) badges.append(el('span', tone ? `badge ${tone}` : 'badge', text));
+    line.append(badges);
+    item.append(line, el('div', 'desc', cmd.desc || ''));
+    const more = el('div', 'more');
+    if (cmd.usage) more.append(el('p', '', cmd.usage));
+    if (cmd.webNote) more.append(el('p', cmd.web ? 'note' : '', cmd.webNote));
+    if (cmd.example) more.append(el('p', 'example mono', cmd.example));
+    if (more.childElementCount) item.append(more);
+    return item;
+  }
+
+  // 没有搜索词时按「最近使用」和分类分组，方便浏览
+  function groupLabel(cmd, i, recentCount) {
+    if (i < recentCount) return i === 0 ? '最近使用' : null;
+    const prev = items[i - 1];
+    if (i === recentCount || !prev || prev.cat !== cmd.cat) return C.categoryLabel(cmd.cat);
+    return null;
+  }
+
   function render() {
+    const searching = query.value.trim() !== '';
     items = C.search(commands, query.value, usage);
+    const recentCount = searching ? 0 : C.recentCommands(commands, usage).length;
     index = Math.min(index, Math.max(items.length - 1, 0));
-    list.replaceChildren(
-      ...items.map((cmd, i) => {
-        const item = el('li', i === index ? 'item active' : 'item');
-        item.setAttribute('role', 'option');
-        item.setAttribute('aria-selected', String(i === index));
-        item.dataset.index = String(i);
-        item.title = codePage ? '点击插入到输入框' : '点击复制';
-        const line = el('div', 'line');
-        line.append(el('span', 'name mono', `/${cmd.name}`));
-        if (cmd.args) line.append(el('span', 'args mono', cmd.args));
-        const badges = el('span', 'badges');
-        for (const [text, tone] of C.badges(cmd)) badges.append(el('span', tone ? `badge ${tone}` : 'badge', text));
-        line.append(badges);
-        item.append(line, el('div', 'desc', cmd.desc || ''));
-        const extra = [cmd.usage, cmd.webNote].filter(Boolean).join(' ');
-        if (extra) item.append(el('div', 'example', extra));
-        if (cmd.example) item.append(el('div', 'example mono', `示例：${cmd.example}`));
-        return item;
-      }),
-    );
-    if (!items.length) list.append(el('li', 'empty', '没有匹配的指令'));
+    const nodes = [];
+    items.forEach((cmd, i) => {
+      const label = searching ? null : groupLabel(cmd, i, recentCount);
+      if (label) {
+        const group = el('li', 'group', label);
+        group.setAttribute('role', 'presentation');
+        nodes.push(group);
+      }
+      nodes.push(itemNode(cmd, i));
+    });
+    list.replaceChildren(...nodes);
+    if (!items.length) list.append(el('li', 'empty', '没有匹配的指令，换个关键词试试'));
     const active = list.querySelector('.item.active');
     if (active) active.scrollIntoView({ block: 'nearest' });
   }

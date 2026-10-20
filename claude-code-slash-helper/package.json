@@ -5,7 +5,8 @@
   "description": "浏览器扩展：在 Claude Code 网页版快速输入 / 指令，并显示提示与用途",
   "scripts": {
     "test": "node --test --test-concurrency=1 tests/*.test.mjs",
-    "pack": "node scripts/pack.mjs"
+    "pack": "node scripts/pack.mjs",
+    "screenshots": "node scripts/screenshots.mjs"
   },
   "devDependencies": {
     "playwright": "1.56.1",

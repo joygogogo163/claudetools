@@ -333,3 +333,12 @@ test('弹出页：列出并搜索指令；不在 Claude Code 页面时提示复�
   await page.fill('#query', '压缩');
   assert.equal(await page.locator('#list .item .name').first().textContent(), '/compact');
 });
+
+test('弹出页：窗口初始很窄时页面宽度不被压缩', async () => {
+  // 浏览器弹出窗口按内容定宽，首次布局时视口很窄；宽度若跟着视口走，弹出页会被压成一条
+  const page = await browser.context.newPage();
+  await page.setViewportSize({ width: 120, height: 600 });
+  await page.goto(`chrome-extension://${browser.extensionId}/popup/popup.html`);
+  await page.waitForSelector('#list .item');
+  assert.equal(await page.evaluate(() => document.body.getBoundingClientRect().width), 400);
+});
