@@ -20,5 +20,7 @@ export function detectPage(url: string): PageMatch | null {
   if (host === 'claude.ai' && /^\/code(\/|$)/.test(path)) return { client: 'claude-code', surface: 'web', runnable: true };
   // ChatGPT 网页版的 Codex 页面：网页有自己的指令菜单，Codex 的斜杠指令不在这里生效
   if (host === 'chatgpt.com' && /^\/codex(\/|$)/.test(path)) return { client: 'codex', surface: 'web', runnable: false };
+  // DeepSeek Harness 的 Web 界面跑在本机（npx @deepseek-ai/dsh web），默认端口 3080；扩展不往里插入，只提供速查和复制
+  if ((host === '127.0.0.1' || host === 'localhost') && parsed.port === '3080') return { client: 'deepseek', surface: 'web', runnable: false };
   return null;
 }

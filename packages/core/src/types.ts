@@ -1,12 +1,12 @@
 // 指令数据的类型。数据由 TypeScript 维护，再导出成 JSON 给 macOS（Swift）和 Windows（Rust）使用。
 
 /** 支持的工具 */
-export type ClientId = 'claude-code' | 'codex';
+export type ClientId = 'claude-code' | 'codex' | 'deepseek';
 
 /**
  * 运行环境：
- * - web：网页版（claude.ai/code）
- * - desktop：桌面客户端（Claude 桌面 App 的 Code 标签页、ChatGPT 桌面 App 的 Codex 模式）
+ * - web：网页版（claude.ai/code；DeepSeek Harness 是本机启动的 Web 界面）
+ * - desktop：桌面客户端（Claude 桌面 App 的 Code 标签页、ChatGPT 桌面 App 的 Codex 模式、DeepSeek Harness 桌面 App）
  * - cli：终端里的命令行工具
  * - ide：编辑器扩展
  */

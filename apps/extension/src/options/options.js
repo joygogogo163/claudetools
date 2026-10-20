@@ -228,7 +228,7 @@
     const hidden = new Set(settings.hiddenCommands || []);
     const groups = C.CLIENTS.flatMap((client) => {
       const commands = C.builtinCommands(client.id);
-      const heading = el('h3', 'client', client.id === 'codex' ? `${client.name}（弹出页速查）` : `${client.name}（网页版）`);
+      const heading = el('h3', 'client', client.id === 'claude-code' ? `${client.name}（网页版）` : `${client.name}（弹出页速查）`);
       return [
         heading,
         ...C.categories(client.id)

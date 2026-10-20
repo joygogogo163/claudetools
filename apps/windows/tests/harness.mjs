@@ -20,9 +20,9 @@ export function serve() {
 
 export function state(patch = {}) {
   return {
-    settings: { shortcut: 'Alt+Slash', insertMode: 'paste', appendSpace: true, lastClient: 'claude-code', hiddenCommands: [], welcomed: true },
+    settings: { shortcut: 'Alt+Slash', insertMode: 'paste', appendSpace: true, lastClient: 'claude-code', hiddenCommands: [], slashTrigger: true, launcher: 'auto', launcherPosition: null, welcomed: true },
     usage: {},
-    context: { detected: null, app: 'explorer', canInsert: true, pending: false },
+    context: { detected: null, app: 'explorer', canInsert: true, pending: false, query: '' },
     version: '0.1.0',
     shortcutError: null,
     ...patch,

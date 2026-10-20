@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "指令面板和设置页：读写设置、收听面板事件",
-  "windows": ["palette", "settings"],
-  "permissions": ["core:default"]
+  "description": "指令面板、设置页和悬浮按钮：读写设置、收听面板事件、拖动悬浮按钮",
+  "windows": ["palette", "settings", "launcher"],
+  "permissions": ["core:default", "core:window:allow-start-dragging"]
 }

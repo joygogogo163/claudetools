@@ -18,8 +18,8 @@ after(async () => {
   server?.close();
 });
 
-const claudeDesktop = { detected: { client: 'claude-code', surface: 'desktop', via: 'app', appName: 'Claude' }, app: 'claude', canInsert: true, pending: false };
-const codexTerminal = { detected: { client: 'codex', surface: 'cli', via: 'process' }, app: 'windowsterminal', canInsert: true, pending: false };
+const claudeDesktop = { detected: { client: 'claude-code', surface: 'desktop', via: 'app', appName: 'Claude' }, app: 'claude', canInsert: true, pending: false, query: '' };
+const codexTerminal = { detected: { client: 'codex', surface: 'cli', via: 'process' }, app: 'windowsterminal', canInsert: true, pending: false, query: '' };
 
 async function palette(ctx) {
   const page = await openPage(context, origin, 'index.html', state({ context: ctx }));
@@ -65,7 +65,7 @@ test('Shift+Enter 插入示例；Tab 切换工具并记住', async () => {
 });
 
 test('ChatGPT 网页版里的 Codex：只复制并提示', async () => {
-  const page = await palette({ detected: { client: 'codex', surface: 'web', via: 'title' }, app: 'msedge', canInsert: true, pending: false });
+  const page = await palette({ detected: { client: 'codex', surface: 'web', via: 'title' }, app: 'msedge', canInsert: true, pending: false, query: '' });
   await page.fill('input', 'compact');
   await page.keyboard.press('Enter');
   assert.deepEqual(await calls(page, 'insert'), []);
@@ -103,4 +103,39 @@ test('设置页：录制快捷键，必须带修饰键', async () => {
   await page.keyboard.press('Control+Shift+KeyK');
   assert.deepEqual((await calls(page, 'update_settings')).at(-1), { patch: { shortcut: 'Ctrl+Shift+KeyK' } });
   assert.equal(await page.textContent('.shortcut'), 'Ctrl + Shift + K');
+});
+
+test('输入 / 弹出：带着斜杠后面已经打出的字打开面板', async () => {
+  const page = await palette({ ...claudeDesktop, query: 'comp' });
+  assert.equal(await page.inputValue('input'), 'comp');
+  assert.match(await page.textContent('.item.active'), /\/compact/);
+  await page.keyboard.press('Enter');
+  assert.equal((await calls(page, 'insert'))[0].text, '/compact ');
+});
+
+test('设置页：输入 / 弹出和悬浮按钮', async () => {
+  const page = await openPage(context, origin, 'settings.html', state());
+  await page.waitForSelector('.shortcut');
+  await page.click('label:has-text("直接弹出指令面板")');
+  await page.click('label:has-text("一直显示")');
+  assert.deepEqual((await calls(page, 'update_settings')).map((c) => c.patch), [{ slashTrigger: false }, { launcher: 'always' }]);
+  assert.equal(await page.locator('button:has-text("重置按钮位置")').count(), 0);
+});
+
+test('设置页：拖动过悬浮按钮后可以重置位置', async () => {
+  const s = state();
+  s.settings.launcherPosition = [100, 200];
+  const page = await openPage(context, origin, 'settings.html', s);
+  await page.click('button:has-text("重置按钮位置")');
+  assert.deepEqual((await calls(page, 'update_settings')).at(-1), { patch: { launcherPosition: null } });
+});
+
+test('悬浮按钮：点击打开面板，右键打开设置，提示里有快捷键', async () => {
+  const page = await openPage(context, origin, 'launcher.html', state());
+  await page.waitForFunction(() => document.getElementById('launcher').title);
+  assert.match(await page.getAttribute('#launcher', 'title'), /Alt \+ \//);
+  await page.click('#launcher');
+  await page.click('#launcher', { button: 'right' });
+  assert.equal((await calls(page, 'launcher_click')).length, 1);
+  assert.equal((await calls(page, 'open_settings')).length, 1);
 });

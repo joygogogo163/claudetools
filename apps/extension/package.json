@@ -1,6 +1,6 @@
 {
   "name": "@vibeslash/extension",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "description": "VibeSlash 指令助手浏览器扩展：适用于 Claude Code 网页版的斜杠指令中文联想与速查，弹出页可查 Codex 指令",
   "type": "module",

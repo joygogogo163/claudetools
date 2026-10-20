@@ -1,9 +1,9 @@
 name: desktop
 
+# 发布见 release.yml：它调用本工作流和 extension.yml，把三个安装包放进同一个 Release
 on:
   push:
     branches: ['**']
-    tags: ['desktop-v*']
     paths:
       - 'apps/windows/**'
       - 'apps/macos/**'
@@ -17,14 +17,10 @@ on:
       - 'packages/core/**'
       - '.github/workflows/desktop.yml'
   workflow_dispatch:
-    inputs:
-      release:
-        description: 创建 Release（标签 desktop-v<版本号>，附上 Windows 和 macOS 安装包）
-        type: boolean
-        default: false
+  workflow_call:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   windows:
@@ -86,35 +82,3 @@ jobs:
           path: |
             apps/macos/build/*.dmg
             apps/macos/build/*.zip
-
-  release:
-    needs: [windows, macos]
-    if: startsWith(github.ref, 'refs/tags/desktop-v') || inputs.release
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          path: out
-          merge-multiple: true
-      - name: 发布 Release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          version="$(node -p "require('./apps/windows/package.json').version")"
-          if [ "$GITHUB_REF_TYPE" = tag ]; then
-            tag="$GITHUB_REF_NAME"
-            [ "$tag" = "desktop-v$version" ] || { echo "标签 $tag 与版本 $version 不一致" >&2; exit 1; }
-          else
-            tag="desktop-v$version"
-          fi
-          gh release create "$tag" out/* \
-            --target "$GITHUB_SHA" \
-            --prerelease \
-            --title "VibeSlash 指令助手 桌面版 v$version" \
-            --notes "Claude Code、Codex 命令速查表：不用背命令，按一下就出来。
-
-          - Windows：下载 \`VibeSlash-$version-windows-x64-setup.exe\` 安装，或下载 portable.zip 解压直接运行。启动后在托盘运行，默认快捷键 Alt + /。
-          - macOS（14 及以上，Apple 芯片和 Intel 通用）：下载 \`VibeSlash-$version-macos.dmg\`，把 VibeSlash 拖进「应用程序」。启动后在菜单栏运行，默认快捷键 ⌥ /，首次使用按提示授权「辅助功能」。
-
-          这是预览版，安装包暂未签名：Windows 可能提示「未知发布者」，点「更多信息」→「仍要运行」；macOS 第一次打开请在「应用程序」里右键 VibeSlash →「打开」。"

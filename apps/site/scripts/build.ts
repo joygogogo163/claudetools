@@ -4,8 +4,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { BASE, TAGLINE, esc } from '../src/layout.ts';
-import { commandsPage, home, homeEn, notFound, type Shots } from '../src/pages.ts';
+import { LOCALES } from '@vibeslash/core';
+import { BASE, esc, pathOf, type PageKey } from '../src/layout.ts';
+import { commandsPage, home, notFound, type Shots } from '../src/pages.ts';
+import { STRINGS } from '../src/strings.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const repo = path.resolve(root, '..', '..');
@@ -31,26 +33,37 @@ for (const [name, source] of Object.entries(SHOTS)) {
   fs.writeFileSync(path.join(dist, 'img', name), data);
 }
 
-const pages: Record<string, string> = {
-  'index.html': home(shots),
-  'en/index.html': homeEn(shots),
-  'claude-code/index.html': commandsPage('claude-code'),
-  'codex/index.html': commandsPage('codex'),
-  '404.html': notFound(),
-};
+// 每种语言四个页面（首页和三个命令大全）；404 只有一个，放在根目录（GitHub Pages 的约定）
+const KEYS: PageKey[] = ['home', 'claude-code', 'codex', 'deepseek'];
+const pages: Record<string, string> = { '404.html': notFound(STRINGS['zh-CN']) };
+for (const locale of LOCALES) {
+  const s = STRINGS[locale];
+  pages[`${pathOf(locale, 'home')}index.html`] = home(s, shots);
+  pages[`${pathOf(locale, 'claude-code')}index.html`] = commandsPage(s, 'claude-code');
+  pages[`${pathOf(locale, 'codex')}index.html`] = commandsPage(s, 'codex');
+  pages[`${pathOf(locale, 'deepseek')}index.html`] = commandsPage(s, 'deepseek');
+}
 for (const [file, html] of Object.entries(pages)) {
   fs.mkdirSync(path.dirname(path.join(dist, file)), { recursive: true });
   fs.writeFileSync(path.join(dist, file), html);
 }
 
 const today = new Date().toISOString().slice(0, 10);
-const indexed = Object.keys(pages).filter((f) => f !== '404.html');
 const pageUrl = (file: string) => BASE + file.replace(/index\.html$/, '');
+// sitemap 里每个页面都列出四种语言的版本（xhtml:link），帮搜索引擎把它们关联起来
+const sitemapEntries = LOCALES.flatMap((locale) =>
+  KEYS.map((key) => {
+    const alternates = LOCALES.map(
+      (l) => `    <xhtml:link rel="alternate" hreflang="${STRINGS[l].htmlLang}" href="${esc(BASE + pathOf(l, key))}"/>`,
+    ).join('\n');
+    return `  <url>\n    <loc>${esc(BASE + pathOf(locale, key))}</loc>\n    <lastmod>${today}</lastmod>\n${alternates}\n  </url>`;
+  }),
+);
 fs.writeFileSync(
   path.join(dist, 'sitemap.xml'),
   `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${indexed.map((f) => `  <url><loc>${esc(pageUrl(f))}</loc><lastmod>${today}</lastmod></url>`).join('\n')}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+${sitemapEntries.join('\n')}
 </urlset>
 `,
 );
@@ -101,4 +114,4 @@ if (problems.length) {
   console.error(problems.join('\n'));
   process.exit(1);
 }
-console.log(`已生成 ${Object.keys(pages).length} 个页面到 dist/（${BASE}）\n${TAGLINE}`);
+console.log(`已生成 ${Object.keys(pages).length} 个页面（${LOCALES.length} 种语言）到 dist/（${BASE}）`);

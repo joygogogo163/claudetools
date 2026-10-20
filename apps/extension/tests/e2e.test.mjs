@@ -322,11 +322,11 @@ test('设置页：添加自定义指令、校验非法名称、切换开关', as
 
   await page.uncheck('[data-setting="inlineTrigger"]');
   await eventually(() => browser.worker.evaluate(() => chrome.storage.sync.get('inlineTrigger')), { inlineTrigger: false });
-  // 两个工具都有 /compact：先是 Claude Code 的，后是 Codex 的，隐藏列表里 Codex 的带前缀
+  // 三个工具都有 /compact：依次是 Claude Code、Codex、DeepSeek 的，隐藏列表里后两个带前缀
   const compact = page.locator('#builtinList label', { hasText: '/compact' }).locator('input');
   await compact.first().uncheck();
   await eventually(() => browser.worker.evaluate(() => chrome.storage.sync.get('hiddenCommands')), { hiddenCommands: ['compact'] });
-  await compact.last().uncheck();
+  await compact.nth(1).uncheck();
   await eventually(() => browser.worker.evaluate(() => chrome.storage.sync.get('hiddenCommands')), {
     hiddenCommands: ['compact', 'codex:compact'],
   });
@@ -355,6 +355,13 @@ test('弹出页：Tab 切换到 Codex，按 Codex 的指令搜索并复制', asy
   await page.waitForSelector('#list .item');
   await page.keyboard.press('Tab');
   assert.equal(await page.getAttribute('[data-client="codex"]', 'aria-pressed'), 'true');
+  // 列表满的时候多了两行提示，也不能超出弹出窗口的高度上限（600px），底部按钮要完整可见
+  const layout = await page.evaluate(() => ({
+    height: document.body.scrollHeight,
+    footerBottom: document.querySelector('footer').getBoundingClientRect().bottom,
+  }));
+  assert.ok(layout.height <= 600, `弹出页高 ${layout.height}px，超过 600px`);
+  assert.ok(layout.footerBottom <= layout.height, '底部按钮被裁掉');
   await page.fill('#query', 'btw');
   assert.equal(await page.locator('#list .item .name').first().textContent(), '/side');
   assert.match(await page.textContent('#list .item.active .where'), /桌面版 · 终端 · IDE/);
@@ -363,6 +370,19 @@ test('弹出页：Tab 切换到 Codex，按 Codex 的指令搜索并复制', asy
   await page.reload();
   await page.waitForSelector('#list .item');
   assert.equal(await page.getAttribute('[data-client="codex"]', 'aria-pressed'), 'true');
+});
+
+test('弹出页：DeepSeek 标签页列出 Harness 的指令，Tab 轮流切回 Claude Code', async () => {
+  const page = await browser.context.newPage();
+  await page.goto(`chrome-extension://${browser.extensionId}/popup/popup.html`);
+  await page.waitForSelector('#list .item');
+  await page.click('[data-client="deepseek"]');
+  assert.equal(await page.getAttribute('[data-client="deepseek"]', 'aria-pressed'), 'true');
+  await page.fill('#query', '计划');
+  assert.equal(await page.locator('#list .item .name').first().textContent(), '/plan');
+  assert.match(await page.textContent('#status'), /DeepSeek Harness/);
+  await page.keyboard.press('Tab');
+  assert.equal(await page.getAttribute('[data-client="claude-code"]', 'aria-pressed'), 'true');
 });
 
 test('弹出页：列出并搜索指令；不在 Claude Code 页面时提示复制', async () => {

@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "name": "VibeSlash 指令助手",
   "short_name": "VibeSlash",
-  "version": "1.1.0",
-  "description": "Claude Code、Codex 命令速查表：不用背命令，输入 / 或按 Alt+K 就出来，每条附中文用途、示例和注意事项。",
+  "version": "1.2.0",
+  "description": "Claude Code、Codex 命令速查表（也支持 DeepSeek）：不用背命令，输入 / 或按 Alt+K 就出来，每条附中文用途、示例和注意事项。",
   "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",

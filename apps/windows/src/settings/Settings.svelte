@@ -1,5 +1,5 @@
 <script lang="ts">
-  // 设置页：快捷键、插入方式、开机自启，以及识别规则和商标声明。
+  // 设置页：快捷键、输入 / 弹出、悬浮按钮、插入方式、开机自启，以及识别规则和商标声明。
   import { CLIENTS, DESKTOP_RULES } from '@vibeslash/core';
   import { onMount } from 'svelte';
   import { api, type Settings } from '../lib/api.ts';
@@ -107,6 +107,35 @@
     </section>
 
     <section>
+      <h2>输入 / 弹出</h2>
+      <label class="check">
+        <input type="checkbox" checked={settings.slashTrigger} onchange={(e) => update({ slashTrigger: e.currentTarget.checked })} />
+        <span>在 Claude、ChatGPT、DeepSeek Harness 桌面 App 的输入框开头输入 <kbd>/</kbd> 时，直接弹出指令面板</span>
+      </label>
+      <p class="help">和浏览器扩展一样：打出的 <kbd>/</kbd> 会在插入指令时自动删掉，按 <kbd>Esc</kbd> 则保留。中文输入法打出的「、」也算。终端里的 Claude Code、Codex 自带指令菜单，所以只在桌面 App 里生效。</p>
+    </section>
+
+    <section>
+      <h2>悬浮按钮</h2>
+      <p class="help">屏幕上的 <kbd>/</kbd> 小圆钮，点一下打开指令面板；按住可以拖到任意位置，右键打开设置。</p>
+      <label class="check">
+        <input type="radio" name="launcher" checked={settings.launcher === 'auto'} onchange={() => update({ launcher: 'auto' })} />
+        <span><strong>自动</strong>（推荐）：Claude、ChatGPT、DeepSeek Harness 桌面 App 在前台时显示</span>
+      </label>
+      <label class="check">
+        <input type="radio" name="launcher" checked={settings.launcher === 'always'} onchange={() => update({ launcher: 'always' })} />
+        <span><strong>一直显示</strong></span>
+      </label>
+      <label class="check">
+        <input type="radio" name="launcher" checked={settings.launcher === 'off'} onchange={() => update({ launcher: 'off' })} />
+        <span><strong>不显示</strong></span>
+      </label>
+      {#if settings.launcherPosition}
+        <button class="btn" type="button" onclick={() => update({ launcherPosition: null })}>重置按钮位置</button>
+      {/if}
+    </section>
+
+    <section>
       <h2>插入</h2>
       <label class="check">
         <input type="radio" name="mode" checked={settings.insertMode === 'paste'} onchange={() => update({ insertMode: 'paste' })} />
@@ -147,7 +176,7 @@
   <footer>
     <p>版本 {version}</p>
     <p class="legal">
-      Claude 和 Claude Code 是 Anthropic, PBC 的商标；Codex 和 ChatGPT 是 OpenAI 的商标。VibeSlash 是独立的第三方开源工具，与 Anthropic、OpenAI
+      Claude 和 Claude Code 是 Anthropic, PBC 的商标；Codex 和 ChatGPT 是 OpenAI 的商标；DeepSeek 是其权利人的商标。VibeSlash 是独立的第三方开源工具，与 Anthropic、OpenAI、DeepSeek
       没有关联，也未获得其认可或赞助；提及相关名称仅为说明兼容性。
     </p>
   </footer>

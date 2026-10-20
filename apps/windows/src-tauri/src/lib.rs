@@ -1,20 +1,25 @@
 //! VibeSlash 指令助手 Windows 版。
 //!
-//! 常驻托盘，按全局快捷键（默认 Alt+/）在 Claude、ChatGPT（Codex）桌面 App 和终端里呼出斜杠指令面板。
+//! 常驻托盘，按全局快捷键（默认 Alt+/）在 Claude、ChatGPT（Codex）桌面 App 和终端里呼出斜杠指令面板；
+//! 在桌面 App 的空输入框里输入 / 或点悬浮按钮也能打开。
 //! 指令数据和搜索在界面里由 @vibeslash/core 处理；这里负责快捷键、识别前台客户端、插入和设置。
 
+mod launcher;
 mod palette;
 mod settings;
 
-use palette::PaletteState;
+use launcher::LauncherState;
+use palette::{Origin, PaletteState};
 use serde::Serialize;
 use serde_json::{Map, Value};
+use std::sync::mpsc;
 use std::time::{SystemTime, UNIX_EPOCH};
 use tauri::menu::{CheckMenuItem, Menu, MenuItem, PredefinedMenuItem};
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
 use tauri::{AppHandle, Manager, Runtime, WindowEvent};
 use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
 use tauri_plugin_global_shortcut::{GlobalShortcutExt, Shortcut, ShortcutState};
+use vibeslash_platform::Signal;
 
 const SETTINGS_LABEL: &str = "settings";
 
@@ -78,6 +83,12 @@ fn update_settings(app: AppHandle, patch: Value) -> Result<settings::Settings, S
         return Err(error);
     }
     settings::save(&app, &next)?;
+    if next.launcher != current.launcher {
+        launcher::refresh(&app);
+    }
+    if next.launcher_position.is_none() && current.launcher_position.is_some() {
+        launcher::reset_position(&app);
+    }
     Ok(next)
 }
 
@@ -105,6 +116,11 @@ fn hide_palette(app: AppHandle, restore: bool) {
 fn open_settings(app: AppHandle) {
     palette::hide(&app, false);
     open_settings_window(&app);
+}
+
+#[tauri::command]
+fn launcher_click(app: AppHandle) {
+    launcher::click(&app);
 }
 
 #[tauri::command]
@@ -138,7 +154,7 @@ fn build_tray<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<()> {
         .menu(&menu)
         .show_menu_on_left_click(false)
         .on_menu_event(move |app, event| match event.id().as_ref() {
-            "open" => palette::toggle(app),
+            "open" => palette::toggle(app, Origin::Shortcut),
             "settings" => open_settings_window(app),
             "autostart" => {
                 let launcher = app.autolaunch();
@@ -151,11 +167,26 @@ fn build_tray<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<()> {
         })
         .on_tray_icon_event(|tray, event| {
             if let TrayIconEvent::Click { button: MouseButton::Left, button_state: MouseButtonState::Up, .. } = event {
-                palette::toggle(tray.app_handle());
+                palette::toggle(tray.app_handle(), Origin::Shortcut);
             }
         })
         .build(app)?;
     Ok(())
+}
+
+/// 监听斜杠键和前台窗口切换，在单独的线程里处理（读输入框内容、识别进程都比较慢）
+fn watch_input<R: Runtime>(app: &AppHandle<R>) {
+    let (sender, receiver) = mpsc::channel();
+    vibeslash_platform::watch_input(sender);
+    let app = app.clone();
+    std::thread::spawn(move || {
+        for signal in receiver {
+            match signal {
+                Signal::Slash { at_line_start } => palette::on_slash(&app, at_line_start),
+                Signal::Foreground(window) => launcher::on_foreground(&app, window),
+            }
+        }
+    });
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -169,12 +200,13 @@ pub fn run() {
             tauri_plugin_global_shortcut::Builder::new()
                 .with_handler(|app, _shortcut, event| {
                     if event.state == ShortcutState::Pressed {
-                        palette::toggle(app);
+                        palette::toggle(app, Origin::Shortcut);
                     }
                 })
                 .build(),
         )
         .manage(PaletteState::default())
+        .manage(LauncherState::default())
         .manage(ShortcutStatus::default())
         .invoke_handler(tauri::generate_handler![
             get_state,
@@ -184,6 +216,7 @@ pub fn run() {
             copy,
             hide_palette,
             open_settings,
+            launcher_click,
             get_autostart,
             set_autostart,
         ])
@@ -197,6 +230,9 @@ pub fn run() {
                 api.prevent_close();
                 let _ = window.hide();
             }
+            WindowEvent::Moved(position) if window.label() == launcher::LABEL => {
+                launcher::on_moved(window.app_handle(), *position);
+            }
             _ => {}
         })
         .setup(|app| {
@@ -206,6 +242,8 @@ pub fn run() {
                 eprintln!("{error}");
             }
             build_tray(handle)?;
+            watch_input(handle);
+            launcher::refresh(handle);
             // 第一次运行时打开设置页，告诉用户快捷键是什么
             if !current.welcomed {
                 current.welcomed = true;

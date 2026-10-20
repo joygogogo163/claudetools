@@ -1,9 +1,10 @@
 // 按工具和运行环境取指令、合并自定义指令、生成标记。
 import { claudeCode } from './clients/claude-code.ts';
 import { codex } from './clients/codex.ts';
+import { deepseek } from './clients/deepseek.ts';
 import type { Client, ClientId, Command, Limit, Surface } from './types.ts';
 
-export const CLIENTS: Record<ClientId, Client> = { 'claude-code': claudeCode, codex };
+export const CLIENTS: Record<ClientId, Client> = { 'claude-code': claudeCode, codex, deepseek };
 export const CLIENT_IDS = Object.keys(CLIENTS) as ClientId[];
 
 export const SURFACE_LABELS: Record<Surface, string> = {

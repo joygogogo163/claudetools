@@ -1,10 +1,19 @@
-// 指令面板：不抢焦点的浮动面板。按快捷键时记下前台应用、识别客户端，把面板放到输入框旁边；
-// 选中指令后关掉面板，焦点自然回到原来的输入框，再粘贴进去。
+// 指令面板：不抢焦点的浮动面板。按快捷键、在输入框里输入 / 或点悬浮按钮时记下前台应用、识别客户端，
+// 把面板放到输入框旁边；选中指令后关掉面板，焦点自然回到原来的输入框，再粘贴进去。
 import AppKit
 import Carbon.HIToolbox
 import Observation
 import SwiftUI
 import VibeSlashCore
+
+/// 面板是怎么打开的
+enum PaletteOrigin {
+    case shortcut
+    /// 在输入框里输入了斜杠；delete 是插入前要删掉的字符数（斜杠和后面已经打出的字）
+    case slash(query: String, delete: Int)
+    /// 点了悬浮按钮；app 是之前在前台的应用，frame 是按钮的位置（AppKit 屏幕坐标）
+    case launcher(app: NSRunningApplication?, frame: NSRect)
+}
 
 enum ChooseMode {
     /// ↩ 插入
@@ -54,14 +63,14 @@ final class PaletteModel {
         items.isEmpty ? nil : items[min(index, items.count - 1)]
     }
 
-    func reset(detected: DetectMatch?, appName: String?, hasTarget: Bool, pending: Bool) {
+    func reset(detected: DetectMatch?, appName: String?, hasTarget: Bool, pending: Bool, query: String = "") {
         self.detected = detected
         self.appName = appName
         self.hasTarget = hasTarget
         self.pending = pending
         pinned = false
         client = detected?.client ?? settings.lastClient
-        query = ""
+        self.query = query
         index = 0
         message = nil
         focusRequest += 1
@@ -134,6 +143,8 @@ final class PaletteController {
     private let settings: AppSettings
     private let panel = PalettePanel()
     private var target: NSRunningApplication?
+    /// 插入前要删掉的字符数
+    private var pendingDelete = 0
     private var keyMonitor: Any?
     /// 每次打开的标识，丢弃上一次打开时还没查完的子进程结果
     private var session = UUID()
@@ -153,18 +164,34 @@ final class PaletteController {
         panel.onResignKey = { [weak self] in self?.hide() }
     }
 
-    func toggle() {
-        panel.isVisible ? hide() : show()
+    var isVisible: Bool { panel.isVisible }
+
+    func toggle(_ origin: PaletteOrigin = .shortcut) {
+        panel.isVisible ? hide() : show(origin)
     }
 
-    func show() {
-        let foreground = Foreground.capture()
+    func show(_ origin: PaletteOrigin = .shortcut) {
+        var foreground = Foreground.capture()
+        var anchor: NSRect?
+        var query = ""
+        pendingDelete = 0
+        switch origin {
+        case .shortcut:
+            break
+        case let .slash(text, delete):
+            query = text
+            pendingDelete = delete
+        case let .launcher(app, frame):
+            // 悬浮按钮不抢焦点，前台通常还是原来的应用；前台是本程序（例如设置窗口）时用之前记下的
+            if foreground == nil { foreground = Foreground.capture(app) }
+            anchor = frame
+        }
         target = foreground.flatMap { NSRunningApplication(processIdentifier: $0.pid) }
         let detected = foreground.flatMap { detectDesktop($0.snapshot) }
         let kind = foreground.map { appKind($0.snapshot) } ?? .other
         // 终端和编辑器要看子进程才知道跑的是哪个工具；查进程较慢，先显示面板，查完再更新
         let needsProcesses = detected == nil && (kind == .terminal || kind == .editor)
-        model.reset(detected: detected, appName: foreground?.name, hasTarget: foreground != nil, pending: needsProcesses)
+        model.reset(detected: detected, appName: foreground?.name, hasTarget: foreground != nil, pending: needsProcesses, query: query)
 
         let current = UUID()
         session = current
@@ -180,7 +207,11 @@ final class PaletteController {
             }
         }
 
-        position(near: foreground)
+        if let anchor {
+            position(nextTo: anchor)
+        } else {
+            position(near: foreground)
+        }
         installKeyMonitor()
         panel.makeKeyAndOrderFront(nil)
     }
@@ -216,11 +247,18 @@ final class PaletteController {
         let target = self.target
         let insertMode = settings.insertMode
         let send = mode == .send
+        let delete = pendingDelete
+        pendingDelete = 0
         Task { @MainActor in
             // 面板不激活本程序，前台应用通常还在前台；万一不在，再把它切回来
             if let target, !target.isActive {
                 target.activate(options: [])
                 try? await Task.sleep(for: .milliseconds(120))
+            }
+            if delete > 0 {
+                // 弹出面板后用户可能又多打了几个字，以输入框里实际的内容为准
+                let count = Foreground.focusedText().flatMap { slashPrefix($0)?.delete } ?? delete
+                await Inserter.deleteBackward(count)
             }
             await Inserter.insert(text, mode: insertMode, send: send)
         }
@@ -256,6 +294,22 @@ final class PaletteController {
             return false
         }
         return true
+    }
+
+    /// 把面板放在悬浮按钮旁边：优先放在按钮左侧、底边对齐，放不下时放右侧，并限制在屏幕内
+    private func position(nextTo button: NSRect) {
+        let size = panel.frame.size
+        let screen = NSScreen.screens.first { $0.frame.intersects(button) } ?? NSScreen.main ?? NSScreen.screens.first
+        guard let visible = screen?.visibleFrame else {
+            panel.center()
+            return
+        }
+        let gap: CGFloat = 8
+        var x = button.minX - gap - size.width
+        if x < visible.minX { x = button.maxX + gap }
+        x = min(max(x, visible.minX), visible.maxX - size.width)
+        let y = min(max(button.minY, visible.minY), visible.maxY - size.height)
+        panel.setFrameOrigin(NSPoint(x: x, y: y))
     }
 
     /// 把面板放在输入框旁边。辅助功能 API 的坐标以主屏幕左上角为原点，AppKit 以左下角为原点。

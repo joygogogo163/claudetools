@@ -3,7 +3,7 @@ import { CLIENTS, commandsFor } from '@vibeslash/core';
 import type { Context } from './api.ts';
 import { badgesFor, buildRows, detailNotes, insertable, statusText, surfaceFor } from './view.ts';
 
-const ctx = (patch: Partial<Context> = {}): Context => ({ detected: null, app: 'explorer', canInsert: true, pending: false, ...patch });
+const ctx = (patch: Partial<Context> = {}): Context => ({ detected: null, app: 'explorer', canInsert: true, pending: false, query: '', ...patch });
 
 describe('环境选择', () => {
   test('识别结果是当前工具时用识别到的环境', () => {

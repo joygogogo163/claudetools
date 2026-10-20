@@ -1,6 +1,6 @@
 name: site
 
-# 官网：每次推送都构建并检查（SEO 要素、站内链接），只有默认分支发布到 GitHub Pages。
+# 官网：每次推送都构建并检查（SEO 要素、站内链接）；默认分支的推送、或手动运行时发布到 GitHub Pages。
 # 首次使用前要在仓库 Settings → Pages 里把 Source 设为「GitHub Actions」。
 on:
   push:
@@ -43,7 +43,7 @@ jobs:
 
   deploy:
     needs: build
-    if: github.ref_name == github.event.repository.default_branch
+    if: github.ref_name == github.event.repository.default_branch || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

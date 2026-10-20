@@ -35,6 +35,22 @@
         "minHeight": 480,
         "visible": false,
         "center": true
+      },
+      {
+        "label": "launcher",
+        "url": "launcher.html",
+        "title": "VibeSlash 悬浮按钮",
+        "width": 48,
+        "height": 48,
+        "decorations": false,
+        "transparent": true,
+        "resizable": false,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "visible": false,
+        "shadow": false,
+        "focus": false,
+        "focusable": false
       }
     ],
     "security": {
@@ -46,7 +62,7 @@
     "targets": ["nsis"],
     "publisher": "VibeSlash",
     "shortDescription": "Claude Code、Codex 命令速查表：不用背命令，按一下就出来。",
-    "longDescription": "VibeSlash 指令助手常驻托盘，在 Claude 桌面 App、ChatGPT 桌面 App 的 Codex 模式和终端里按 Alt+/ 呼出斜杠指令面板，自动识别当前客户端，选中即插入。",
+    "longDescription": "VibeSlash 指令助手常驻托盘，在 Claude 桌面 App、ChatGPT 桌面 App 的 Codex 模式和终端里按 Alt+/ 呼出斜杠指令面板，也可以在输入框里直接输入 / 或点悬浮按钮打开；自动识别当前客户端，选中即插入。",
     "category": "DeveloperTool",
     "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.ico"],
     "windows": {

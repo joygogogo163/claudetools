@@ -1,4 +1,5 @@
-// VibeSlash 指令助手 macOS 版：菜单栏常驻，按 ⌥/ 在 Claude、ChatGPT（Codex）桌面 App 和终端里呼出斜杠指令面板。
+// VibeSlash 指令助手 macOS 版：菜单栏常驻，按 ⌥/ 在 Claude、ChatGPT（Codex）桌面 App 和终端里呼出斜杠指令面板；
+// 在桌面 App 的空输入框里输入 / 或点悬浮按钮也能打开。
 import AppKit
 
 @main
@@ -18,6 +19,8 @@ enum VibeSlashMain {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let settings = AppSettings()
     private var palette: PaletteController!
+    private var slashTrigger: SlashTrigger!
+    private var launcher: LauncherController!
     private var statusItem: NSStatusItem!
     private var openItem: NSMenuItem!
     private var settingsWindow: SettingsWindowController?
@@ -25,6 +28,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         palette = PaletteController(settings: settings) { [weak self] in self?.showSettings() }
         HotKeyCenter.shared.onPress = { [weak self] in self?.palette.toggle() }
+        slashTrigger = SlashTrigger(settings: settings, palette: palette)
+        slashTrigger.start()
+        launcher = LauncherController(settings: settings, palette: palette) { [weak self] in self?.showSettings() }
         if !HotKeyCenter.shared.register(settings.hotKey) {
             // 保存的快捷键被占用时退回默认的
             settings.hotKey = .default

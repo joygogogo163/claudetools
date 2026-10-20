@@ -5,6 +5,8 @@ import {
   availableIn,
   badges,
   commandsFor,
+  TRANSLATIONS,
+  clientIn,
   detectDesktop,
   detectPage,
   sanitizeCustom,
@@ -151,6 +153,9 @@ describe('识别网页', () => {
     ['https://claude.ai/code', { client: 'claude-code', surface: 'web', runnable: true }],
     ['https://claude.ai/code/session_123?x=1', { client: 'claude-code', surface: 'web', runnable: true }],
     ['https://chatgpt.com/codex/tasks/task_e_1', { client: 'codex', surface: 'web', runnable: false }],
+    ['http://127.0.0.1:3080/sessions/abc', { client: 'deepseek', surface: 'web', runnable: false }],
+    ['http://localhost:3080/', { client: 'deepseek', surface: 'web', runnable: false }],
+    ['http://localhost:5173/', null],
     ['https://claude.ai/new', null],
     ['https://claude.ai/codex', null],
     ['https://example.com/code', null],
@@ -185,5 +190,44 @@ describe('识别桌面前台客户端', () => {
   test('浏览器只认页面标题，普通 Claude 对话不算', () => {
     expect(detectDesktop({ platform: 'mac', app: 'com.google.Chrome', title: 'x - Claude Code' })).toMatchObject({ client: 'claude-code', surface: 'web' });
     expect(detectDesktop({ platform: 'mac', app: 'com.google.Chrome', title: 'Claude' })).toBeNull();
+  });
+});
+
+describe('多语言', () => {
+  const CJK = /[一-鿿]/;
+
+  test.each(Object.entries(TRANSLATIONS))('%s 译文齐全，字段与原文一一对应', (locale, translation) => {
+    for (const id of CLIENT_IDS) {
+      const source = CLIENTS[id];
+      const text = translation![id];
+      for (const cat of source.categories) expect(text.categories[cat.key], `${id} 分类 ${cat.key}`).toBeTruthy();
+      expect(Object.keys(text.commands).sort()).toEqual(source.commands.map((c) => c.name).sort());
+      for (const cmd of source.commands) {
+        const t = text.commands[cmd.name];
+        const where = `${locale} ${id} /${cmd.name}`;
+        expect(t.desc, where).toBeTruthy();
+        expect(!!t.usage, `${where} usage`).toBe(!!cmd.usage);
+        // 原文的参数和示例里有中文时必须翻译，没有时不用
+        expect(!!t.args, `${where} args`).toBe(!!cmd.args && CJK.test(cmd.args));
+        expect(!!t.example, `${where} example`).toBe(!!cmd.example && CJK.test(cmd.example));
+        expect(Object.keys(t.notes ?? {}).sort(), `${where} notes`).toEqual(Object.keys(cmd.notes ?? {}).sort());
+        if (t.example) expect(t.example.startsWith(`/${cmd.name}`), `${where} 示例应以指令开头`).toBe(true);
+      }
+    }
+  });
+
+  test('英文和韩文里没有残留的中文', () => {
+    for (const locale of ['en', 'ko'] as const) {
+      const json = JSON.stringify(TRANSLATIONS[locale]);
+      expect(json.match(/[一-鿿]+/g) ?? [], locale).toEqual([]);
+    }
+  });
+
+  test('clientIn 替换说明文字，中文原样返回', () => {
+    expect(clientIn('claude-code', 'zh-CN')).toBe(CLIENTS['claude-code']);
+    const compact = clientIn('claude-code', 'en').commands.find((c) => c.name === 'compact')!;
+    expect(compact.desc).not.toMatch(/[一-鿿]/);
+    expect(compact.cat).toBe('context');
+    expect(clientIn('codex', 'ja').categories.find((c) => c.key === 'context')!.label).not.toBe('上下文');
   });
 });

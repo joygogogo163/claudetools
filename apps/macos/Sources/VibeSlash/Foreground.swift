@@ -18,14 +18,11 @@ struct ForegroundInfo: Sendable {
 
 @MainActor
 enum Foreground {
-    static func capture() -> ForegroundInfo? {
-        guard let app = NSWorkspace.shared.frontmostApplication, app.processIdentifier != getpid() else { return nil }
+    /// 前台应用；传入 app 时采集那个应用（点悬浮按钮时用之前在前台的应用）
+    static func capture(_ app: NSRunningApplication? = NSWorkspace.shared.frontmostApplication) -> ForegroundInfo? {
+        guard let app, app.processIdentifier != getpid(), !app.isTerminated else { return nil }
         let pid = app.processIdentifier
-        let element = AXUIElementCreateApplication(pid)
-        // 无响应的程序最多等 0.25 秒
-        AXUIElementSetMessagingTimeout(element, 0.25)
-        // 让 Electron / Chromium 应用（Claude、ChatGPT、VS Code）暴露完整的无障碍树
-        AXUIElementSetAttributeValue(element, "AXManualAccessibility" as CFString, kCFBooleanTrue)
+        let element = Self.application(pid)
         let window = Self.element(element, kAXFocusedWindowAttribute)
         let focused = Self.element(element, kAXFocusedUIElementAttribute)
         return ForegroundInfo(
@@ -36,6 +33,24 @@ enum Foreground {
             focusFrame: focused.flatMap(Self.frame),
             windowFrame: window.flatMap(Self.frame)
         )
+    }
+
+    /// 前台应用里获得焦点的输入框的文字（最多看前 64 个字符，只用来判断是不是以斜杠开头）；读不到时返回 nil
+    static func focusedText() -> String? {
+        guard let app = NSWorkspace.shared.frontmostApplication, app.processIdentifier != getpid() else { return nil }
+        guard let focused = Self.element(Self.application(app.processIdentifier), kAXFocusedUIElementAttribute),
+              let value = Self.string(focused, kAXValueAttribute)
+        else { return nil }
+        return String(value.prefix(64))
+    }
+
+    private static func application(_ pid: pid_t) -> AXUIElement {
+        let element = AXUIElementCreateApplication(pid)
+        // 无响应的程序最多等 0.25 秒
+        AXUIElementSetMessagingTimeout(element, 0.25)
+        // 让 Electron / Chromium 应用（Claude、ChatGPT、VS Code）暴露完整的无障碍树
+        AXUIElementSetAttributeValue(element, "AXManualAccessibility" as CFString, kCFBooleanTrue)
+        return element
     }
 
     private static func copy(_ element: AXUIElement, _ attribute: String) -> CFTypeRef? {

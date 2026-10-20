@@ -9,14 +9,18 @@ use windows::Win32::System::Com::{CLSCTX_INPROC_SERVER, COINIT_MULTITHREADED, Co
 use windows::Win32::System::Threading::{
     OpenProcess, PROCESS_NAME_WIN32, PROCESS_QUERY_LIMITED_INFORMATION, QueryFullProcessImageNameW,
 };
-use windows::Win32::UI::Accessibility::{CUIAutomation, IUIAutomation};
+use windows::Win32::UI::Accessibility::{
+    CUIAutomation, IUIAutomation, IUIAutomationTextPattern, IUIAutomationValuePattern, UIA_TextPatternId,
+    UIA_ValuePatternId,
+};
 use windows::Win32::UI::Input::KeyboardAndMouse::{
     GetAsyncKeyState, INPUT, INPUT_0, INPUT_KEYBOARD, KEYBD_EVENT_FLAGS, KEYBDINPUT, KEYEVENTF_KEYUP,
-    KEYEVENTF_UNICODE, SendInput, VIRTUAL_KEY, VK_CONTROL, VK_LWIN, VK_MENU, VK_RETURN, VK_RWIN, VK_SHIFT, VK_V,
+    KEYEVENTF_UNICODE, SendInput, VIRTUAL_KEY, VK_BACK, VK_CONTROL, VK_LWIN, VK_MENU, VK_RETURN, VK_RWIN, VK_SHIFT,
+    VK_V,
 };
 use windows::Win32::UI::WindowsAndMessaging::{
     GetForegroundWindow, GetWindowRect, GetWindowTextLengthW, GetWindowTextW, GetWindowThreadProcessId, IsIconic,
-    SW_RESTORE, SetForegroundWindow, ShowWindow,
+    IsWindow, SW_RESTORE, SW_SHOWNOACTIVATE, SetForegroundWindow, ShowWindow,
 };
 use windows::core::PWSTR;
 
@@ -83,9 +87,14 @@ fn work_area(hwnd: HWND) -> Option<Rect> {
 }
 
 pub fn capture_foreground() -> Option<Foreground> {
+    capture_window(unsafe { GetForegroundWindow() }.0 as isize)
+}
+
+/// 某个窗口的进程、标题和位置；窗口已经关掉时返回 None
+pub fn capture_window(window: isize) -> Option<Foreground> {
     unsafe {
-        let hwnd = GetForegroundWindow();
-        if hwnd.is_invalid() {
+        let hwnd = HWND(window as *mut _);
+        if hwnd.is_invalid() || !IsWindow(Some(hwnd)).as_bool() {
             return None;
         }
         let mut pid = 0u32;
@@ -108,13 +117,48 @@ pub fn capture_foreground() -> Option<Foreground> {
 /// 当前获得焦点的控件（通常就是输入框）在屏幕上的位置。须在面板显示之前调用。
 pub fn focused_element_rect() -> Option<Rect> {
     unsafe {
-        // 已经初始化过时返回 S_FALSE 或 RPC_E_CHANGED_MODE，都不影响使用
-        let _ = CoInitializeEx(None, COINIT_MULTITHREADED);
-        let automation: IUIAutomation = CoCreateInstance(&CUIAutomation, None, CLSCTX_INPROC_SERVER).ok()?;
-        let element = automation.GetFocusedElement().ok()?;
+        let element = automation()?.GetFocusedElement().ok()?;
         let rect = to_rect(element.CurrentBoundingRectangle().ok()?);
         (rect.width > 0 && rect.height > 0).then_some(rect)
     }
+}
+
+fn automation() -> Option<IUIAutomation> {
+    unsafe {
+        // 已经初始化过时返回 S_FALSE 或 RPC_E_CHANGED_MODE，都不影响使用
+        let _ = CoInitializeEx(None, COINIT_MULTITHREADED);
+        CoCreateInstance(&CUIAutomation, None, CLSCTX_INPROC_SERVER).ok()
+    }
+}
+
+/// 当前获得焦点的输入框里的文字（最多读 64 个字符，只用来判断是不是以斜杠开头）；读不到时返回 None
+pub fn focused_text() -> Option<String> {
+    unsafe {
+        let element = automation()?.GetFocusedElement().ok()?;
+        // 富文本输入框（Claude、ChatGPT 桌面 App 都是）用文本模式读得更准，普通输入框用值模式
+        if let Ok(pattern) = element.GetCurrentPatternAs::<IUIAutomationTextPattern>(UIA_TextPatternId)
+            && let Ok(text) = pattern.DocumentRange().and_then(|range| range.GetText(64))
+        {
+            return Some(text.to_string());
+        }
+        let pattern = element.GetCurrentPatternAs::<IUIAutomationValuePattern>(UIA_ValuePatternId).ok()?;
+        Some(pattern.CurrentValue().ok()?.to_string())
+    }
+}
+
+/// 显示窗口但不抢焦点（悬浮按钮用）
+pub fn show_inactive(window: isize) {
+    unsafe {
+        let _ = ShowWindow(HWND(window as *mut _), SW_SHOWNOACTIVATE);
+    }
+}
+
+/// 按 count 次退格，删掉触发面板时输入的斜杠
+pub fn delete_chars(count: usize) -> Result<(), String> {
+    crate::wait_modifiers_released(Duration::from_millis(800));
+    let inputs: Vec<INPUT> =
+        (0..count).flat_map(|_| [key(VK_BACK, 0, KEYBD_EVENT_FLAGS(0)), key(VK_BACK, 0, KEYEVENTF_KEYUP)]).collect();
+    send(&inputs)
 }
 
 /// 把焦点还给呼出面板前的窗口

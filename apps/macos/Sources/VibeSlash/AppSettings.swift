@@ -60,6 +60,24 @@ final class AppSettings {
     /// 不想看到的内置指令，写法见 hiddenKey
     var hiddenCommands: Set<String> { didSet { defaults.set(Array(hiddenCommands), forKey: "hiddenCommands") } }
     var welcomed: Bool { didSet { defaults.set(welcomed, forKey: "welcomed") } }
+    /// 在 Claude、ChatGPT 桌面 App 的空输入框里输入 / 时自动弹出面板
+    var slashTrigger: Bool { didSet { defaults.set(slashTrigger, forKey: "slashTrigger") } }
+    /// 悬浮按钮的显示方式
+    var launcher: LauncherMode {
+        didSet {
+            defaults.set(launcher.rawValue, forKey: "launcher")
+            onLauncherChange?()
+        }
+    }
+    /// 悬浮按钮的位置（AppKit 屏幕坐标，左下角）；nil 表示默认位置
+    var launcherPosition: CGPoint? {
+        didSet {
+            save(launcherPosition.map { [$0.x, $0.y] }, "launcherPosition")
+            if launcherPosition == nil { onLauncherChange?() }
+        }
+    }
+    /// 悬浮按钮的设置变了，由悬浮按钮控制器设置
+    @ObservationIgnored var onLauncherChange: (() -> Void)?
     /// 工具 → 使用记录
     private(set) var usage: [String: Usage] { didSet { save(usage, "usage") } }
 
@@ -70,6 +88,10 @@ final class AppSettings {
         lastClient = defaults.string(forKey: "lastClient").flatMap(ClientID.init(rawValue:)) ?? .claudeCode
         hiddenCommands = Set(defaults.stringArray(forKey: "hiddenCommands") ?? [])
         welcomed = defaults.bool(forKey: "welcomed")
+        slashTrigger = defaults.object(forKey: "slashTrigger") as? Bool ?? true
+        launcher = defaults.string(forKey: "launcher").flatMap(LauncherMode.init(rawValue:)) ?? .auto
+        launcherPosition = Self.load([Double].self, "launcherPosition", from: defaults)
+            .flatMap { $0.count == 2 ? CGPoint(x: $0[0], y: $0[1]) : nil }
         usage = Self.load([String: Usage].self, "usage", from: defaults) ?? [:]
     }
 

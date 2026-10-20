@@ -1,21 +1,25 @@
 # VibeSlash 指令助手
 
+**简体中文** · [English](README.en.md) · [日本語](README.ja.md) · [한국어](README.ko.md)
+
 **Claude Code、Codex 命令速查表：不用背命令，按一下就出来。**
 
 *Every Claude Code & Codex slash command, one keystroke away — no memorizing.*
 
-[![最新版本](https://img.shields.io/github/v/release/joygogogo163/claudetools?filter=extension-v*&label=%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC)](https://github.com/joygogogo163/claudetools/releases/latest)
+[![最新版本](https://img.shields.io/github/v/release/joygogogo163/claudetools?label=%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC)](https://github.com/joygogogo163/claudetools/releases/latest)
 [![下载次数](https://img.shields.io/github/downloads/joygogogo163/claudetools/total?label=%E4%B8%8B%E8%BD%BD)](https://github.com/joygogogo163/claudetools/releases)
 [![构建](https://img.shields.io/github/actions/workflow/status/joygogogo163/claudetools/extension.yml?label=%E6%9E%84%E5%BB%BA)](https://github.com/joygogogo163/claudetools/actions/workflows/extension.yml)
 ![Chrome / Edge](https://img.shields.io/badge/Chrome%20%2F%20Edge-Manifest%20V3-4285F4)
 
 **VibeSlash** 是一个免费开源的 Claude Code、Codex 斜杠命令（slash commands）中文助手，有 Chrome / Edge 浏览器扩展和 Windows、macOS 桌面版。浏览器扩展帮你在 [Claude Code 网页版](https://claude.ai/code)里更快地输入斜杠命令：在输入框开头敲 `/` 就会弹出中文联想；按 `Alt+K` 打开完整的命令面板，每条命令都附有中文说明、使用场景、示例和网页版注意事项。记不住 `/compact`、`/context`、`/code-review` 怎么用？用中文搜「压缩」「上下文」「审查」就能找到。
 
-点击浏览器工具栏上的扩展图标，还能速查 **OpenAI Codex** 的全部斜杠命令，并标明每条命令在 Codex CLI、IDE 扩展和 ChatGPT 桌面 App 里是否可用。
+点击浏览器工具栏上的扩展图标，还能速查 **OpenAI Codex** 和 **DeepSeek Harness** 的全部斜杠命令，并标明每条 Codex 命令在 Codex CLI、IDE 扩展和 ChatGPT 桌面 App 里是否可用。
 
-**桌面版**（预览）常驻托盘或菜单栏：在 Claude 桌面 App、ChatGPT 桌面 App 的 Codex 模式，或终端里运行的 `claude` / `codex` 中按 `Alt + /`（macOS 是 `⌥ /`），命令面板会出现在输入框旁边，自动识别当前是哪个工具，选中即插入。
+**桌面版**（预览）常驻托盘或菜单栏：在 Claude 桌面 App、ChatGPT 桌面 App 的 Codex 模式，或终端里运行的 `claude` / `codex` 中按 `Alt + /`（macOS 是 `⌥ /`），命令面板会出现在输入框旁边，自动识别当前是哪个工具，选中即插入。在桌面 App 里还可以像浏览器扩展一样，直接在输入框开头输入 `/`，或者点屏幕上的 `/` 悬浮按钮。
 
-[**⬇ 下载**](https://github.com/joygogogo163/claudetools/releases) · [官网](https://joygogogo163.github.io/claudetools/) · [安装方法](#安装) · [桌面版](#桌面版windows--macos) · [命令大全](#命令大全) · [常见问题](#常见问题) · [English](#english)
+> 🪶 **小到可以忽略**：浏览器扩展只有 **52 KB**，Windows 安装包 **1.3 MB**，macOS 安装包 **1 MB**。不用装 .NET、Java 或 Node.js，下载几秒钟，装上就能用。
+
+[**⬇ 下载**](https://github.com/joygogogo163/claudetools/releases) · [安装方法](#安装) · [桌面版](#桌面版windows--macos) · [命令大全](#命令大全) · [常见问题](#常见问题) · [官网](https://joygogogo163.github.io/claudetools/)
 
 ![在 Claude Code 网页版输入 /co，弹出 /compact、/context、/code-review 等命令的中文联想](apps/extension/docs/suggest.png)
 
@@ -28,9 +32,9 @@
 - [命令大全](#命令大全)
   - [Claude Code 命令大全](#claude-code-命令大全)
   - [Codex 命令大全](#codex-命令大全)
+  - [DeepSeek 命令大全](#deepseek-命令大全)
 - [常见问题](#常见问题)
 - [路线图](#路线图)
-- [English](#english)
 - [商标声明](#商标声明)
 
 ## 功能
@@ -43,7 +47,8 @@
 - **最近使用**：常用命令自动排在最前面。
 - **自定义命令**：把仓库里的技能（`.claude/skills`）、命令（`.claude/commands`）或团队约定的指令加进来，支持 JSON 导入导出，随浏览器账号同步。
 - **深色模式**：跟随页面自动切换。
-- **Codex 命令速查**：工具栏弹出页可以在 Claude Code 和 Codex 之间切换（按 `Tab`），打开 Codex 相关页面时自动切到 Codex，标出每条命令适用的环境（终端、IDE、桌面版）。
+- **Codex、DeepSeek 命令速查**：工具栏弹出页可以在 Claude Code、Codex 和 DeepSeek 之间切换（按 `Tab`），打开 Codex 或 DeepSeek Harness 的页面时自动切过去，并标出每条 Codex 命令适用的环境（终端、IDE、桌面版）。
+- **轻巧**：扩展 52 KB，桌面版安装包约 1 MB，不需要额外的运行环境。
 - **注重隐私**：不发起任何网络请求，不读取对话记录，只在本地运行。
 
 ## 截图
@@ -68,31 +73,43 @@
 
 ## 桌面版（Windows / macOS）
 
-桌面版不依赖浏览器，在桌面客户端和终端里用快捷键呼出命令面板：
+桌面版不依赖浏览器，在桌面客户端和终端里呼出命令面板。有三种打开方式：按快捷键（`Alt + /`，macOS `⌥ /`）、在桌面 App 的输入框开头输入 `/`、点屏幕上的 `/` 悬浮按钮。
 
 | 前台是… | 识别为 | 显示的命令 |
 | :- | :- | :- |
 | Claude 桌面 App（Code 标签页） | Claude Code · 桌面版 | 桌面版可用的 Claude Code 命令，标出需要带参数的 |
 | ChatGPT 桌面 App（Codex 模式） | Codex · 桌面版 | 桌面 App 支持的 Codex 命令 |
+| DeepSeek Harness 桌面 App | DeepSeek · 桌面版 | DeepSeek Harness 的命令 |
 | 终端里运行 `claude` / `codex` | Claude Code / Codex · 终端 | 按终端里的子进程和窗口标题判断 |
 | VS Code、Cursor、JetBrains 等编辑器 | 同上；编辑器里的 Codex 算 IDE 扩展 | IDE 扩展支持的 Codex 命令 |
 | 认不出的窗口 | 上次使用的工具 | 全部命令，可按 `Tab` 切换 |
 
+- **输入 `/` 就弹出**：和浏览器扩展一样，在 Claude、ChatGPT、DeepSeek Harness 桌面 App 的输入框开头输入 `/`（中文输入法打出的 `、` 也算），命令面板直接弹出；接着打的字会作为搜索词。选中命令时自动删掉刚才的 `/`，按 `Esc` 则保留。终端里的 Claude Code、Codex 自带命令菜单，所以这个功能只在桌面 App 里生效，可以在设置里关掉。
+- **悬浮按钮**：屏幕上一个不抢焦点的 `/` 小圆钮，点一下打开命令面板，按住可以拖到任意位置（会记住），右键打开设置。可以设成「自动」（Claude、ChatGPT、DeepSeek Harness 桌面 App 在前台时显示，默认）、「一直显示」或「不显示」。
 - **贴着输入框弹出**：读取输入框位置（Windows 用 UI Automation，macOS 用辅助功能 API），面板优先出现在输入框上方。
 - **选中即插入**：`Enter` 插入，`Ctrl+Enter`（macOS `⌘↩`）插入并发送，`Shift+Enter` 插入示例。默认借用剪贴板粘贴，完成后恢复原来的剪贴板内容；也可以改成逐字输入。
-- **轻量**：Windows 版用 Rust + Tauri 2（系统自带的 WebView2），macOS 版是原生 Swift（AppKit + SwiftUI），都不需要额外运行时。
+- **轻巧**：安装包只有 1 MB 左右，几秒钟就能下载完。Windows 版用 Rust 编写，界面借用系统自带的 WebView2；macOS 版是原生 Swift 应用（AppKit + SwiftUI）。都不需要安装 .NET、Java、Node.js 之类的运行环境，也不像 Electron 应用那样自带一整个浏览器内核（这类应用的安装包常常有上百 MB）。
+
+| 下载 | 大小 |
+| :- | :-: |
+| 浏览器扩展（Chrome / Edge） | **52 KB** |
+| Windows 安装包（`setup.exe`） | **1.3 MB** |
+| Windows 便携版（`portable.zip`，解压即用） | **1.6 MB** |
+| macOS 安装包（`.dmg`，Apple 芯片和 Intel 通用） | **1.0 MB** |
+
+<sub>以 Releases 里扩展 v1.1.1、桌面版 v0.1.0 的文件大小为准。</sub>
 
 | Windows：识别到 Claude 桌面 App | Windows：识别到终端里的 Codex（深色） |
 | :-: | :-: |
 | <img src="apps/windows/docs/palette-claude.png" width="420" alt="VibeSlash 桌面版识别到 Claude 桌面 App，显示 Claude Code 命令并标出需带参数的命令"> | <img src="apps/windows/docs/palette-codex.png" width="420" alt="VibeSlash 桌面版深色模式，识别到终端里的 Codex，中文搜索「审查」找到 /review"> |
 
-> 桌面版还是预览版，安装包暂未签名。macOS 版需要授权「辅助功能」才能读取输入框位置和插入命令，未授权时选中的命令只复制到剪贴板。
+> 桌面版还是预览版，安装包暂未签名。macOS 版需要授权「辅助功能」才能读取输入框位置、识别输入的 `/` 和插入命令，未授权时选中的命令只复制到剪贴板。输入 `/` 弹出只判断按下的是不是斜杠键，不记录、不上传任何按键内容。
 
 ## 安装
 
 ### 浏览器扩展
 
-1. 到 [Releases](https://github.com/joygogogo163/claudetools/releases?q=extension) 下载最新的 `vibeslash-extension-v*.zip`，解压到一个固定的目录（之后不要删除或移动它）。
+1. 到 [Releases](https://github.com/joygogogo163/claudetools/releases/latest) 下载最新的 `vibeslash-extension-v*.zip`，解压到一个固定的目录（之后不要删除或移动它）。
 2. 打开 `chrome://extensions`（Edge 为 `edge://extensions`），开启右上角的「开发者模式」。
 3. 点「加载已解压的扩展程序」，选择解压出来的目录（里面直接就是 `manifest.json`）。
 4. 刷新已经打开的 claude.ai/code 页面，在输入框里输入 `/` 试试。
@@ -101,15 +118,15 @@
 
 ### Windows 版
 
-到 [Releases](https://github.com/joygogogo163/claudetools/releases?q=desktop) 下载 `VibeSlash-*-windows-x64-setup.exe` 安装（或下载 portable.zip 解压直接运行）。启动后在托盘运行，默认快捷键 `Alt + /`，可以在设置里修改。提示「未知发布者」时点「更多信息」→「仍要运行」。
+到 [Releases](https://github.com/joygogogo163/claudetools/releases/latest) 下载 `VibeSlash-*-windows-x64-setup.exe` 安装（或下载 portable.zip 解压直接运行）。启动后在托盘运行，默认快捷键 `Alt + /`，可以在设置里修改。提示「未知发布者」时点「更多信息」→「仍要运行」。
 
 ### macOS 版
 
-到 [Releases](https://github.com/joygogogo163/claudetools/releases?q=desktop) 下载 `VibeSlash-*-macos.dmg`，把 VibeSlash 拖进「应用程序」。第一次打开请在「应用程序」里右键 VibeSlash →「打开」，再按提示在「系统设置 › 隐私与安全性 › 辅助功能」里允许 VibeSlash。启动后在菜单栏运行，默认快捷键 `⌥ /`。需要 macOS 14 及以上。
+到 [Releases](https://github.com/joygogogo163/claudetools/releases/latest) 下载 `VibeSlash-*-macos.dmg`，把 VibeSlash 拖进「应用程序」。第一次打开请在「应用程序」里右键 VibeSlash →「打开」，再按提示在「系统设置 › 隐私与安全性 › 辅助功能」里允许 VibeSlash。启动后在菜单栏运行，默认快捷键 `⌥ /`。需要 macOS 14 及以上。
 
 ## 命令大全
 
-下面两张表由 VibeSlash 的指令数据自动生成，和扩展里显示的内容一致。
+下面的表格由 VibeSlash 的指令数据自动生成，和扩展里显示的内容一致。
 
 ### Claude Code 命令大全
 
@@ -304,6 +321,38 @@
 
 <!-- commands:codex:end -->
 
+### DeepSeek 命令大全
+
+以下是 DeepSeek 官方智能体 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（`dsh`）的内置斜杠命令，依据官方仓库的[命令文档](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/subsystems/commands.md)和源码整理。这些命令在 Harness 的 Web 界面（`npx @deepseek-ai/dsh web`，默认 <http://127.0.0.1:3080>）或桌面 App 的输入框里输入，命令行模式没有命令菜单；放在 `.dsh/skills` 里的技能也会以 `/技能名` 出现在菜单里。Harness 还是开发者预览版，命令可能随版本增减。
+
+如果你是按 DeepSeek 的文档把 Claude Code 接到 DeepSeek 的 API 上使用，用的就是 Claude Code 的命令，看上面的 [Claude Code 命令大全](#claude-code-命令大全) 即可。
+
+<!-- commands:deepseek:start -->
+<!-- 由 scripts/readme.ts 生成，请勿手改 -->
+
+#### 模式与权限
+
+| 指令 | 作用 | 备注 |
+| :- | :- | :- |
+| `/plan [off\|消息]` | 进入或退出计划模式：先出方案，确认后再动手改。 |  |
+| `/goal [目标\|clear\|edit <目标>\|pause\|resume]` | 设定或查看长任务的目标，Harness 会围绕目标持续推进。 |  |
+| `/permission <预设>` | 切换权限预设（沙箱模式加审批策略）。 |  |
+
+#### 上下文
+
+| 指令 | 作用 | 备注 |
+| :- | :- | :- |
+| `/compact` | 压缩较早的对话历史，释放上下文空间。 |  |
+
+#### 会话
+
+| 指令 | 作用 | 备注 |
+| :- | :- | :- |
+| `/export` | 把本次会话的日志下载为 ZIP 压缩包。 |  |
+| `/feedback <内容>` | 记录对本次会话的反馈。 |  |
+
+<!-- commands:deepseek:end -->
+
 ## 常见问题
 
 ### Claude Code 网页版支持斜杠命令吗？
@@ -328,11 +377,15 @@
 
 ### 支持 Codex 吗？
 
-支持速查。点击扩展图标，在弹出页切换到 Codex（或按 `Tab`），可以搜索全部 Codex 斜杠命令，点击复制后到 Codex CLI、IDE 扩展或 ChatGPT 桌面 App 里粘贴。Codex 的命令在 ChatGPT 网页版不生效，所以扩展不会在网页里插入 Codex 命令；在桌面客户端和终端里直接呼出命令面板的功能会放在桌面版里，见[路线图](#路线图)。
+支持速查。点击扩展图标，在弹出页切换到 Codex（或按 `Tab`），可以搜索全部 Codex 斜杠命令，点击复制后到 Codex CLI、IDE 扩展或 ChatGPT 桌面 App 里粘贴。Codex 的命令在 ChatGPT 网页版不生效，所以扩展不会在网页里插入 Codex 命令；想在 ChatGPT 桌面 App 和终端里直接呼出命令面板，请用[桌面版](#桌面版windows--macos)。
+
+### 支持 DeepSeek 吗？
+
+支持。DeepSeek 官方的智能体 DeepSeek Harness 有 `/plan`、`/goal`、`/compact` 等斜杠命令，VibeSlash 收录了它们的中文说明（见 [DeepSeek 命令大全](#deepseek-命令大全)）。桌面版能识别 DeepSeek Harness 桌面 App；浏览器扩展的弹出页也能速查，在本机打开 Harness 的 Web 界面（默认 3080 端口）时会自动切到 DeepSeek。如果你是把 Claude Code 接到 DeepSeek 的 API 上使用，用的就是 Claude Code 的命令。
 
 ### 会收集我的数据吗？
 
-不会。扩展的页面脚本只在 `https://claude.ai/*` 上运行，不发起任何网络请求，不读取对话记录；弹出页只在你点击扩展图标时读取当前标签页的网址，用来判断是 Claude Code 还是 Codex。设置和自定义命令保存在浏览器自己的存储里。
+不会。扩展的页面脚本只在 `https://claude.ai/*` 上运行，不发起任何网络请求，不读取对话记录；弹出页只在你点击扩展图标时读取当前标签页的网址，用来判断是哪个工具。设置和自定义命令保存在浏览器自己的存储里。
 
 ### 支持 Firefox / Safari 吗？
 
@@ -343,22 +396,13 @@
 - [x] Chrome / Edge 扩展：Claude Code 网页版命令联想与命令面板
 - [x] Codex 斜杠命令中文说明，弹出页速查
 - [x] 桌面版预览（Windows / macOS）：在 Claude 桌面 App、ChatGPT 桌面 App 的 Codex 模式和终端里用快捷键呼出命令面板，自动识别当前客户端
-- [x] [官网](https://joygogogo163.github.io/claudetools/)：Claude Code、Codex 命令大全
+- [x] [官网](https://joygogogo163.github.io/claudetools/)：Claude Code、Codex、DeepSeek 命令大全（中文、English、日本語、한국어）
+- [x] 桌面版：输入 `/` 自动弹出命令面板、可拖动的悬浮按钮
+- [x] DeepSeek Harness 命令速查与桌面 App 识别
 - [ ] 桌面版：自定义命令、代码签名与自动更新
-- [ ] 输入 `/` 时自动弹出联想（桌面版）
-
-## English
-
-*Every Claude Code & Codex slash command, one keystroke away — no memorizing.*
-
-**VibeSlash** is a free, open-source Chrome / Edge extension that adds slash-command autocomplete and a searchable command palette to [Claude Code on the web](https://claude.ai/code). Type `/` at the start of the prompt to get suggestions, or press `Alt+K` to browse every Claude Code slash command with descriptions, usage notes, examples and web-specific caveats (descriptions are in Chinese). The toolbar popup also works as a quick reference for OpenAI Codex slash commands, showing which ones work in the Codex CLI, the IDE extension and the ChatGPT desktop app. You can add your own commands for either tool. It runs entirely locally: no network requests, no access to your conversations.
-
-The Windows and macOS apps (preview) live in the tray / menu bar. Press `Alt + /` (`⌥ /` on macOS) in the Claude desktop app, ChatGPT's Codex mode or a terminal running `claude` / `codex`: the palette opens next to the input box, detects which tool you are using, and inserts the command you pick.
-
-Download from [Releases](https://github.com/joygogogo163/claudetools/releases). For the extension, unzip it, enable Developer mode at `chrome://extensions` and choose **Load unpacked**. Website: <https://joygogogo163.github.io/claudetools/>
 
 ## 商标声明
 
-Claude 和 Claude Code 是 Anthropic, PBC 的商标；Codex 和 ChatGPT 是 OpenAI 的商标。VibeSlash 是独立的第三方开源项目，与 Anthropic、OpenAI 没有任何关联，也未获得其认可、赞助或授权。本项目提及这些名称仅用于说明兼容性，相关商标归各自所有者所有。
+Claude 和 Claude Code 是 Anthropic, PBC 的商标；Codex 和 ChatGPT 是 OpenAI 的商标；DeepSeek 是其权利人的商标。VibeSlash 是独立的第三方开源项目，与 Anthropic、OpenAI、DeepSeek 没有任何关联，也未获得其认可、赞助或授权。本项目提及这些名称仅用于说明兼容性，相关商标归各自所有者所有。
 
-Claude and Claude Code are trademarks of Anthropic, PBC. Codex and ChatGPT are trademarks of OpenAI. VibeSlash is an independent, unofficial open-source project and is not affiliated with, endorsed by, or sponsored by Anthropic or OpenAI.
+Claude and Claude Code are trademarks of Anthropic, PBC. Codex and ChatGPT are trademarks of OpenAI. DeepSeek is a trademark of its respective owner. VibeSlash is an independent, unofficial open-source project and is not affiliated with, endorsed by, or sponsored by Anthropic, OpenAI or DeepSeek.

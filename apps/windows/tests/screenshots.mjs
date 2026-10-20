@@ -10,14 +10,14 @@ const shots = [
   {
     file: 'palette-claude.png',
     colorScheme: 'light',
-    context: { detected: { client: 'claude-code', surface: 'desktop', via: 'app', appName: 'Claude' }, app: 'claude', canInsert: true, pending: false },
+    context: { detected: { client: 'claude-code', surface: 'desktop', via: 'app', appName: 'Claude' }, app: 'claude', canInsert: true, pending: false, query: '' },
     usage: { 'claude-code': { compact: { count: 3, last: 2 }, 'code-review': { count: 1, last: 1 } } },
     keys: ['ArrowDown'],
   },
   {
     file: 'palette-codex.png',
     colorScheme: 'dark',
-    context: { detected: { client: 'codex', surface: 'cli', via: 'process' }, app: 'windowsterminal', canInsert: true, pending: false },
+    context: { detected: { client: 'codex', surface: 'cli', via: 'process' }, app: 'windowsterminal', canInsert: true, pending: false, query: '' },
     query: '审查',
   },
 ];

@@ -21,7 +21,7 @@
 
 ## 安装
 
-1. 到仓库的 [Releases](https://github.com/joygogogo163/claudetools/releases) 页面下载最新的 `vibeslash-extension-v*.zip`，解压到一个固定的目录（之后不要删除或移动它）。
+1. 到仓库的 [Releases](https://github.com/joygogogo163/claudetools/releases/latest) 页面下载最新的 `vibeslash-extension-v*.zip`，解压到一个固定的目录（之后不要删除或移动它）。
 2. 打开 `chrome://extensions`（Edge 为 `edge://extensions`），开启右上角的「开发者模式」。
 3. 点「加载已解压的扩展程序」，选择解压出来的目录（里面直接就是 `manifest.json`）。
 4. 刷新已经打开的 claude.ai/code 页面。
@@ -39,13 +39,13 @@ pnpm zip
 
 先构建，再生成 `dist/vibeslash-extension-v<版本号>.zip`。`manifest.json` 在压缩包根目录，可以直接分发，也可以上传到 Chrome 应用商店。打包会先检查 `src/manifest.json` 和 `package.json` 的版本号是否一致。
 
-GitHub Actions 每次推送都会跑测试并打包，zip 作为构建产物（Artifacts）保存在对应的运行记录里。发布正式版本：
+GitHub Actions 每次推送都会跑测试并打包，zip 作为构建产物（Artifacts）保存在对应的运行记录里。
 
-1. 同时修改 `src/manifest.json` 和 `package.json` 里的 `version`，提交并推送。
-2. 推送标签 `extension-v<版本号>`，例如 `git tag extension-v1.1.0 && git push origin extension-v1.1.0`。
-3. 工作流会校验标签与版本号一致，然后创建 Release 并附上 zip。
+扩展、Windows 版和 macOS 版共用一个版本号，一起发在同一个 Release 里：
 
-不方便推送标签时，也可以在 Actions 页面手动运行 `extension` 工作流并勾选「创建 Release」，工作流会在所选分支的最新提交上创建标签 `extension-v<版本号>` 和 Release。
+1. 在仓库根目录运行 `node scripts/version.ts <版本号>`，它会同时改好扩展、Windows 版、macOS 版的版本号；提交并合并到默认分支。
+2. 在 Actions 页面手动运行 `release` 工作流（或推送标签 `v<版本号>`）。
+3. 工作流会构建三个版本，校验版本号一致，然后创建 Release `v<版本号>`，附上扩展 zip、Windows 安装包和 macOS 安装包。
 
 ## 收录的指令
 

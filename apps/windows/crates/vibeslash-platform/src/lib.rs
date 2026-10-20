@@ -4,12 +4,15 @@ use std::time::Duration;
 use vibeslash_detect::Process;
 
 mod layout;
+pub mod trigger;
 pub use layout::place_palette;
 
 #[cfg(windows)]
+mod hooks;
+#[cfg(windows)]
 mod windows;
 #[cfg(windows)]
-pub use crate::windows::*;
+pub use crate::{hooks::watch_input, windows::*};
 
 #[cfg(not(windows))]
 mod fallback;
@@ -39,6 +42,15 @@ pub struct Foreground {
     /// 窗口所在显示器的工作区（不含任务栏）
     pub work_area: Option<Rect>,
     pub window_rect: Option<Rect>,
+}
+
+/// 后台线程监听到的系统事件，见 watch_input
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Signal {
+    /// 按下了斜杠键；at_line_start 是按键记录给出的「这一行还没输入过东西」
+    Slash { at_line_start: bool },
+    /// 前台窗口换成了别的程序的窗口（不含本程序自己的窗口）
+    Foreground(isize),
 }
 
 /// 插入方式
